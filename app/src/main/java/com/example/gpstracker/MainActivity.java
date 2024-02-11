@@ -53,6 +53,7 @@ public class MainActivity extends AppCompatActivity implements LocListenerInterf
 
     }
     public void onClickDistance(View view){
+
         showDialog();
     }
 
