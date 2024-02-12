@@ -8,22 +8,26 @@ import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity implements LocListenerInterface {
-    private TextView tvDistance, tvVelocity;
+    private TextView tvResDistance, tvTotal, tvVelocity;
     private Location lastLocation;
     private LocationManager locationManager;
     private MyLocListener myLocListener;
     private int distance;
+    private int total_distance;
+    private int rest_distance;
     private ProgressBar pb;
 
     @Override
@@ -34,8 +38,9 @@ public class MainActivity extends AppCompatActivity implements LocListenerInterf
     }
 
     private void init() {
+        tvTotal = findViewById(R.id.tvTotal);
+        tvResDistance = findViewById(R.id.tvRest);
         tvVelocity = findViewById(R.id.tvVelocity);
-        tvDistance = findViewById(R.id.tvDistance);
         pb = findViewById(R.id.progressBar);
         pb.setMax(1000);
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -44,10 +49,28 @@ public class MainActivity extends AppCompatActivity implements LocListenerInterf
         checkPermissions();
 
     }
+    private  void setDistance(String dis){
+        pb.setMax(Integer.parseInt(dis));
+        rest_distance = Integer.parseInt(dis);
+        distance = Integer.parseInt(dis);
+        tvResDistance.setText(dis);
+    }
+
     private void showDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.dialog_title);
         ConstraintLayout cl = (ConstraintLayout) getLayoutInflater().inflate(R.layout.dialog_layout, null);
+        builder.setPositiveButton(R.string.dialog_button, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                AlertDialog ad = (AlertDialog) dialog;
+                EditText ed =  ad.findViewById(R.id.edText);
+                if(ed != null){
+                    if(!ed.getText().toString().equals(""))setDistance(ed.getText().toString());
+
+                }
+            }
+        });
         builder.setView(cl);
         builder.show();
 
@@ -55,6 +78,18 @@ public class MainActivity extends AppCompatActivity implements LocListenerInterf
     public void onClickDistance(View view){
 
         showDialog();
+    }
+    private void updateDistance(Location loc){
+        if (loc.hasSpeed() && lastLocation !=null) {
+           if(distance > total_distance) total_distance += lastLocation.distanceTo(loc);
+           if(rest_distance > 0) rest_distance -= lastLocation.distanceTo(loc);
+            pb.setProgress(total_distance);
+        }
+        lastLocation = loc;
+        tvResDistance.setText(String.valueOf(rest_distance));
+        tvTotal.setText(String.valueOf(total_distance));
+        tvVelocity.setText(String.valueOf(loc.getSpeed()));
+
     }
 
 
@@ -84,12 +119,6 @@ public class MainActivity extends AppCompatActivity implements LocListenerInterf
 
     @Override
     public void OnLocationChanged(Location loc) {
-        if (loc.hasSpeed() && lastLocation !=null) {
-            distance += lastLocation.distanceTo(loc);
-        }
-        lastLocation = loc;
-        tvDistance.setText(String.valueOf(distance));
-        tvVelocity.setText(String.valueOf(loc.getSpeed()));
-
+        updateDistance(loc);
     }
 }
