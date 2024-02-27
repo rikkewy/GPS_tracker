@@ -29,6 +29,7 @@ public class MainActivity extends AppCompatActivity implements LocListenerInterf
     private int total_distance;
     private int rest_distance;
     private ProgressBar pb;
+    long time_start,time_now;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,18 +81,19 @@ public class MainActivity extends AppCompatActivity implements LocListenerInterf
         showDialog();
     }
     private void updateDistance(Location loc){
-        if (loc.hasSpeed() && lastLocation !=null) {
-           if(distance > total_distance) total_distance += lastLocation.distanceTo(loc);
-           if(rest_distance > 0) rest_distance -= lastLocation.distanceTo(loc);
+        if (loc.getSpeed()!=0 && lastLocation !=null) {
+            float d_distance=lastLocation.distanceTo(loc);
+            if(distance > total_distance) total_distance +=(int)d_distance;
+            if(rest_distance > 0) rest_distance -= (int)d_distance;
             pb.setProgress(total_distance);
         }
         lastLocation = loc;
         tvResDistance.setText(String.valueOf(rest_distance));
         tvTotal.setText(String.valueOf(total_distance));
         tvVelocity.setText(String.valueOf(loc.getSpeed()));
+        long currenttime=(System.nanoTime()-time_start)/1000000000;
 
     }
-
 
 
     @Override
