@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "369945020721",
+    "project_id": "androidmessenger-8e5fd",
+    "storage_bucket": "androidmessenger-8e5fd.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:369945020721:android:350f7a85282575ff2a4810",
+        "android_client_info": {
+          "package_name": "com.example.gpstracker"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDWa9Jei1C2JwMe-edBdtjziOk7BEqWr70"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
