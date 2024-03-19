@@ -1,5 +1,4 @@
 package com.example.gpstracker;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -15,6 +14,7 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ProgressBar;
@@ -22,6 +22,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
+
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity implements LocListenerInterface {
     private TextView tvResDistance, tvTotal, tvVelocity;
@@ -32,14 +34,17 @@ public class MainActivity extends AppCompatActivity implements LocListenerInterf
     private int total_distance;
     private int rest_distance;
     private ProgressBar pb;
-    long time_start,time_now;
+    private int seconds;
+    private boolean running;
+    TextView stopwatch;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        stopwatch = findViewById(R.id.chron);
         init();
-
+        runTimer();
         ////// ПРОВЕРКА НА НАЛИЧИЕ В БАЗЕ ДАННЫХ ПОЛЬЗОВАТЕЛЯ //////
         if(FirebaseAuth.getInstance().getCurrentUser()==null){
             startActivity(new Intent(MainActivity.this, LoginActivity.class));
@@ -100,10 +105,30 @@ public class MainActivity extends AppCompatActivity implements LocListenerInterf
         tvResDistance.setText(String.valueOf(rest_distance));
         tvTotal.setText(String.valueOf(total_distance));
         tvVelocity.setText(String.valueOf(loc.getSpeed()));
-        long currenttime=(System.nanoTime()-time_start)/1000000000;
-
     }
 
+    public void onClickStart(View view) {
+        running = true;
+    }
+    private void runTimer() {
+        final Handler handler = new Handler();
+        handler.post(new Runnable() {
+            @Override
+            public void run()
+            {
+                int hours = seconds / 3600;
+                int minutes = (seconds % 3600) / 60;
+                int secs = seconds % 60;
+                String time = String.format(Locale.getDefault(), "%d:%02d:%02d", hours, minutes, secs);
+                stopwatch.setText(time);
+                if (running) {
+                    seconds++;
+                }
+                handler.postDelayed(this, 1000);
+            }
+        });
+    }
+    //^^^^^^^^^^^^^^^^^^^^^^^^^^^СЕКУНДОМЕР^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -116,17 +141,17 @@ public class MainActivity extends AppCompatActivity implements LocListenerInterf
 
         }
     }
-        private void checkPermissions(){
+    private void checkPermissions(){
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                    && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},
-                        100);
+                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},
+                    100);
 
         }else{
-                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2, 1, myLocListener);
-            }
-
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2, 1, myLocListener);
         }
+
+    }
 
     @Override
     public void OnLocationChanged(Location loc) {
