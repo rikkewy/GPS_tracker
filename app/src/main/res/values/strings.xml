@@ -1,6 +1,5 @@
-
 <resources>
-    <string name="app_name">GPS tracker</string>
+    <string name="app_name">FitZone</string>
     <string name="dialog_title">Расстояние</string>
     <string name="dialog_button">Готово</string>
 </resources>
