@@ -4,8 +4,8 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/blue</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="backgroundColor">@color/colorBackground</item>
-        <item name="actionBarStyle">@style/Custom.ActionBar</item>
+        <item name="backgroundColor">@color/black</item>
+        <item name="backgroundTint">@color/colorBackgroundTint</item>
     </style>
 
     <style name="Theme.GPSTracker" parent="AppTheme" />

@@ -2,4 +2,6 @@
     <string name="app_name">FitZone</string>
     <string name="dialog_title">Расстояние</string>
     <string name="dialog_button">Готово</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
