@@ -1,6 +1,7 @@
 package com.example.gpstracker;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 
@@ -22,7 +23,7 @@ public class Main extends AppCompatActivity implements BottomNavigationView.OnNa
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.main);
 
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
 
@@ -38,22 +39,12 @@ public class Main extends AppCompatActivity implements BottomNavigationView.OnNa
     @SuppressLint("NonConstantResourceId")
     @Override
     public  boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.person:
-                getSupportFragmentManager().beginTransaction().replace(R.id.flFragment, firstFragment)
-                        .commit();
-                return true;
-
-            case R.id.home:
-                getSupportFragmentManager().beginTransaction().replace(R.id.flFragment, secondFragment)
-                        .commit();
-                return true;
-
-            case R.id.training:
-                getSupportFragmentManager().beginTransaction().replace(R.id.flFragment, thirdFragment)
-                        .commit();
-                return true;
+        int id = item.getItemId();
+        if(id == R.id.person){
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
         }
+
         return false;
     }
 
