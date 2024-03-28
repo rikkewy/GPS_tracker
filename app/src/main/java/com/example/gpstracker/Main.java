@@ -13,6 +13,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.auth.FirebaseAuth;
 
 public class Main extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
 
@@ -31,6 +32,7 @@ public class Main extends AppCompatActivity implements BottomNavigationView.OnNa
         bottomNavigationView.setSelectedItemId(R.id.person);
         bottomNavigationView.setSelectedItemId(R.id.home);
         bottomNavigationView.setSelectedItemId(R.id.training);
+
     }
     FirstFragment firstFragment = new FirstFragment();
     SecondFragment secondFragment = new SecondFragment();
@@ -39,14 +41,14 @@ public class Main extends AppCompatActivity implements BottomNavigationView.OnNa
     @SuppressLint("NonConstantResourceId")
     @Override
     public  boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        int id = item.getItemId();
-        if(id == R.id.person){
-            Intent intent = new Intent(this, MainActivity.class);
-            startActivity(intent);
-        }
-
+        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+                if(menuItem.getItemId()==R.id.person)startActivity(new Intent(Main.this, MainActivity.class));
+                return true;
+            }
+        });
         return false;
     }
-
 
 }

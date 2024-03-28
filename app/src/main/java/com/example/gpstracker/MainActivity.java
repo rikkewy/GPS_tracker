@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity implements LocListenerInterf
         stopwatch = findViewById(R.id.chron);
         init();
         runTimer();
-        ////// ПРОВЕРКА НА НАЛИЧИЕ В БАЗЕ ДАННЫХ ПОЛЬЗОВАТЕЛЯ //////
+        //// ПРОВЕРКА НА НАЛИЧИЕ В БАЗЕ ДАННЫХ ПОЛЬЗОВАТЕЛЯ //////
         if(FirebaseAuth.getInstance().getCurrentUser()==null){
             startActivity(new Intent(MainActivity.this, LoginActivity.class));
             //// ЕСЛИ ПОЛЬЗОВАТЕЛЬ НЕ ЗАРЕГИСТРИРОВАН ТО ПЕРЕХОД НА ОКНО АВТОРИЗАЦИИ ////
