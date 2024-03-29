@@ -9,9 +9,6 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import com.example.gpstracker.databinding.ActivityLoginBinding;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -46,7 +43,7 @@ public class LoginActivity extends AppCompatActivity {
                                 @Override
                                 public void onComplete(@NonNull Task<AuthResult> task) {
                                     if(task.isSuccessful()){
-                                        startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                                        startActivity(new Intent(LoginActivity.this, TrainingActivity.class));
                                     }
                                 }
                             });

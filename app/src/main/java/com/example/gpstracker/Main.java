@@ -5,17 +5,13 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 
-import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 
-public class Main extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
+public class Main extends AppCompatActivity{
 
     BottomNavigationView bottomNavigationView;
 
@@ -26,29 +22,29 @@ public class Main extends AppCompatActivity implements BottomNavigationView.OnNa
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
 
+        //// ПРОВЕРКА НА НАЛИЧИЕ В БАЗЕ ДАННЫХ ПОЛЬЗОВАТЕЛЯ //////
+        if(FirebaseAuth.getInstance().getCurrentUser()==null){
+            startActivity(new Intent(Main.this, LoginActivity.class));
+            //// ЕСЛИ ПОЛЬЗОВАТЕЛЬ НЕ ЗАРЕГИСТРИРОВАН ТО ПЕРЕХОД НА ОКНО АВТОРИЗАЦИИ ////
+        }
+
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
 
-        bottomNavigationView.setOnNavigationItemSelectedListener(this);
+        //bottomNavigationView.setOnNavigationItemSelectedListener(this);
         bottomNavigationView.setSelectedItemId(R.id.person);
         bottomNavigationView.setSelectedItemId(R.id.home);
         bottomNavigationView.setSelectedItemId(R.id.training);
 
+        setAct();
+        bottomNavigationView.getMenu().getItem(1).setChecked(true);///устанавливаем выбранной кнопку home///
     }
-    FirstFragment firstFragment = new FirstFragment();
-    SecondFragment secondFragment = new SecondFragment();
-    ThirdFragment thirdFragment = new ThirdFragment();
-
-    @SuppressLint("NonConstantResourceId")
-    @Override
-    public  boolean onNavigationItemSelected(@NonNull MenuItem item) {
+    public void setAct(){
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-                if(menuItem.getItemId()==R.id.person)startActivity(new Intent(Main.this, MainActivity.class));
-                return true;
+                if(menuItem.getItemId()==R.id.person) startActivity(new Intent(Main.this, TrainingActivity.class));
+                return false;
             }
         });
-        return false;
     }
-
 }

@@ -25,7 +25,7 @@ import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.Locale;
 
-public class MainActivity extends AppCompatActivity implements LocListenerInterface {
+public class TrainingActivity extends AppCompatActivity implements LocListenerInterface {
     private TextView tvResDistance, tvTotal, tvVelocity;
     private Location lastLocation;
     private LocationManager locationManager;
@@ -41,15 +41,10 @@ public class MainActivity extends AppCompatActivity implements LocListenerInterf
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_training);
         stopwatch = findViewById(R.id.chron);
         init();
         runTimer();
-        //// ПРОВЕРКА НА НАЛИЧИЕ В БАЗЕ ДАННЫХ ПОЛЬЗОВАТЕЛЯ //////
-        if(FirebaseAuth.getInstance().getCurrentUser()==null){
-            startActivity(new Intent(MainActivity.this, LoginActivity.class));
-            //// ЕСЛИ ПОЛЬЗОВАТЕЛЬ НЕ ЗАРЕГИСТРИРОВАН ТО ПЕРЕХОД НА ОКНО АВТОРИЗАЦИИ ////
-        }
     }
 
     private void init() {
@@ -82,33 +77,47 @@ public class MainActivity extends AppCompatActivity implements LocListenerInterf
                 EditText ed =  ad.findViewById(R.id.edText);
                 if(ed != null){
                     if(!ed.getText().toString().equals(""))setDistance(ed.getText().toString());
-
                 }
             }
         });
         builder.setView(cl);
         builder.show();
-
     }
     public void onClickDistance(View view){
-
         showDialog();
     }
+    float d_distance;
     private void updateDistance(Location loc){
-        if (loc.getSpeed()!=0 && lastLocation !=null) {
-            float d_distance=lastLocation.distanceTo(loc);
-            if(distance > total_distance) total_distance +=(int)d_distance;
-            if(rest_distance > 0) rest_distance -= (int)d_distance;
-            pb.setProgress(total_distance);
+        if(running) {
+            if (loc.getSpeed() != 0 && lastLocation != null) {
+                d_distance = lastLocation.distanceTo(loc);
+                if (distance > total_distance) total_distance += (int) d_distance;
+                if (rest_distance > 0) rest_distance -= (int) d_distance;
+                pb.setProgress(total_distance);
+            }
+            lastLocation = loc;
+            tvResDistance.setText(String.valueOf(rest_distance));
+            tvTotal.setText(String.valueOf(total_distance));
+            tvVelocity.setText(String.valueOf(loc.getSpeed()));
         }
-        lastLocation = loc;
-        tvResDistance.setText(String.valueOf(rest_distance));
-        tvTotal.setText(String.valueOf(total_distance));
-        tvVelocity.setText(String.valueOf(loc.getSpeed()));
     }
 
-    public void onClickStart(View view) {
-        running = true;
+    public void onClickStart(View view) {running = true;}
+    ///////// ОСТАНАВЛИВАЕТ ТРЕНИРОВКУ И ПОКАЗЫВАЕТ ДИАЛОГОВОЕ ОКНО //////////
+    public void onClickStop(View view){
+        running = false;
+        String str =
+                "Дистанция: " + String.valueOf(total_distance) + "\n" +
+                        "Время: " + stopwatch.getText().toString();
+        DialogAftTraining dialog1 = new DialogAftTraining();
+        Bundle args = new Bundle();
+        args.putString("key", str);
+        dialog1.setArguments(args);
+        dialog1.show(getSupportFragmentManager(), "custom");
+
+        stopwatch.setText(R.string.zero_stopwatch);
+        tvTotal.setText("0");
+        seconds=0;
     }
     private void runTimer() {
         final Handler handler = new Handler();
@@ -120,10 +129,13 @@ public class MainActivity extends AppCompatActivity implements LocListenerInterf
                 int minutes = (seconds % 3600) / 60;
                 int secs = seconds % 60;
                 String time = String.format(Locale.getDefault(), "%d:%02d:%02d", hours, minutes, secs);
-                stopwatch.setText(time);
                 if (running) {
                     seconds++;
+                    stopwatch.setText(time);
                 }
+                //else{
+                //    seconds=0;
+                //}
                 handler.postDelayed(this, 1000);
             }
         });
