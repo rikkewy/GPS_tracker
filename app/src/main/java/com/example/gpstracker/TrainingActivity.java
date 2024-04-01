@@ -10,6 +10,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Build;
@@ -17,12 +19,15 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.text.DecimalFormat;
 import java.util.Locale;
 
 public class TrainingActivity extends AppCompatActivity implements LocListenerInterface {
@@ -37,14 +42,23 @@ public class TrainingActivity extends AppCompatActivity implements LocListenerIn
     private int seconds;
     private boolean running;
     TextView stopwatch;
+    TextView tempos;
+    DBHelperTraining DB;
+    int id = 1;
+    ListView listView;
+
+    SQLiteDatabase db;
+    Cursor userCursor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_training);
         stopwatch = findViewById(R.id.chron);
+        tempos = findViewById(R.id.tempo);
         init();
         runTimer();
+        DB = new DBHelperTraining(this);
     }
 
     private void init() {
@@ -63,7 +77,7 @@ public class TrainingActivity extends AppCompatActivity implements LocListenerIn
         pb.setMax(Integer.parseInt(dis));
         rest_distance = Integer.parseInt(dis);
         distance = Integer.parseInt(dis);
-        tvResDistance.setText(dis);
+        tvResDistance.setText("/"+dis);
     }
 
     private void showDialog() {
@@ -88,18 +102,22 @@ public class TrainingActivity extends AppCompatActivity implements LocListenerIn
     }
     float d_distance;
     private void updateDistance(Location loc){
-        if(running) {
-            if (loc.getSpeed() != 0 && lastLocation != null) {
-                d_distance = lastLocation.distanceTo(loc);
-                if (distance > total_distance) total_distance += (int) d_distance;
-                if (rest_distance > 0) rest_distance -= (int) d_distance;
-                pb.setProgress(total_distance);
-            }
-            lastLocation = loc;
-            tvResDistance.setText(String.valueOf(rest_distance));
-            tvTotal.setText(String.valueOf(total_distance));
-            tvVelocity.setText(String.valueOf(loc.getSpeed()));
+        long startTime = System.nanoTime();
+        //Код, время выполнения которого нужно измерить
+        if (loc.getSpeed() != 0 && lastLocation != null) {
+            d_distance = lastLocation.distanceTo(loc);
+            if (distance > total_distance) total_distance += (int) d_distance;
+            //if (rest_distance > 0) rest_distance -= (int) d_distance;
+            pb.setProgress(total_distance);
         }
+        lastLocation = loc;
+        //tvResDistance.setText(String.valueOf(rest_distance));
+        tvTotal.setText(String.valueOf(total_distance));
+        String formattedSpeed = new DecimalFormat("#0.0").format(loc.getSpeed()*3600/1000);
+        tvVelocity.setText(formattedSpeed);
+        long endTime = System.nanoTime();
+        long elapsedTime = endTime - startTime;
+        checkedTemp(loc, elapsedTime);
     }
 
     public void onClickStart(View view) {running = true;}
@@ -115,9 +133,30 @@ public class TrainingActivity extends AppCompatActivity implements LocListenerIn
         dialog1.setArguments(args);
         dialog1.show(getSupportFragmentManager(), "custom");
 
+        int calories = 0;///// ЭТО НЕ КАЛОРИИ, КАЛОРИИ НЕ СДЕЛАНЫ //////
+        Boolean insert = DB.insertData(id, total_distance, tempos.getText().toString(), calories,
+                stopwatch.getText().toString());
+        if(insert){
+            Toast.makeText(TrainingActivity.this, "Тренировка записана", Toast.LENGTH_SHORT).show();
+        }
+        id++;
+
         stopwatch.setText(R.string.zero_stopwatch);
+        tempos.setText("0:00");
         tvTotal.setText("0");
         seconds=0;
+    }
+
+
+    private void checkedTemp(Location loc, long elapsedTime){
+        if (loc.getSpeed() != 0 && lastLocation != null) {
+            float metrs = lastLocation.distanceTo(loc);
+            float temp = (elapsedTime/60) / (metrs/1000);
+            int min = (int) temp;
+            int sec = (int)(60 * (temp % (int) temp));
+            String endTemp = min + ":" + sec;
+            tempos.setText(endTemp);
+        }
     }
     private void runTimer() {
         final Handler handler = new Handler();
@@ -133,9 +172,6 @@ public class TrainingActivity extends AppCompatActivity implements LocListenerIn
                     seconds++;
                     stopwatch.setText(time);
                 }
-                //else{
-                //    seconds=0;
-                //}
                 handler.postDelayed(this, 1000);
             }
         });

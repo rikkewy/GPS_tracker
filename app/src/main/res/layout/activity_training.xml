@@ -20,23 +20,24 @@
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.542"
+        app:layout_constraintHorizontal_bias="0.981"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.218" />
+        app:layout_constraintVertical_bias="0.215" />
 
     <TextView
         android:id="@+id/tvTotal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="TextView"
+        android:layout_marginTop="144dp"
+        android:text="Расстояние"
         android:textColor="#000000"
         android:textSize="48dp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.052"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvRest"
+        app:layout_constraintTop_toTopOf="parent"
         tools:ignore="MissingConstraints" />
 
     <ProgressBar
@@ -78,23 +79,34 @@
         android:id="@+id/start_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="4dp"
+        android:layout_marginEnd="4dp"
         android:onClick="onClickStart"
         android:text="Старт"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.512"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.544"
         tools:ignore="MissingConstraints" />
 
     <Button
         android:id="@+id/stop"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="СТОП"
+        android:layout_marginStart="4dp"
         android:onClick="onClickStop"
-        app:layout_constraintBottom_toTopOf="@+id/chron"
+        android:text="СТОП"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvVelocity" />
+        app:layout_constraintTop_toBottomOf="@id/chron" />
+
+    <TextView
+        android:id="@+id/tempo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="28dp"
+        android:text="Tempo"
+        app:layout_constraintBottom_toTopOf="@+id/chron"
+        app:layout_constraintEnd_toStartOf="@+id/start_time"
+        app:layout_constraintStart_toEndOf="@+id/stop" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -12,7 +12,6 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
 
 public class DialogAftTraining extends DialogFragment {
-
     @NonNull
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         String str = getArguments().getString("key");
@@ -21,7 +20,6 @@ public class DialogAftTraining extends DialogFragment {
                 .setMessage(str)
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        // Закрываем диалоговое окно
                         dialog.cancel();
                     }
                 });
