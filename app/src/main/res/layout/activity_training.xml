@@ -52,6 +52,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvTotal" />
 
+
     <TextView
         android:id="@+id/tvVelocity"
         android:layout_width="wrap_content"
@@ -107,6 +108,7 @@
         app:layout_constraintBottom_toTopOf="@+id/chron"
         app:layout_constraintEnd_toStartOf="@+id/start_time"
         app:layout_constraintStart_toEndOf="@+id/stop" />
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
