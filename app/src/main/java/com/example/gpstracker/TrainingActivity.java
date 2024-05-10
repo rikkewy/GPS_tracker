@@ -1,41 +1,49 @@
 package com.example.gpstracker;
+
+import android.Manifest;
+import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
+import android.location.Location;
+import android.location.LocationManager;
+import android.location.LocationListener;
+import android.os.Build;
+import android.os.Bundle;
+import android.os.Handler;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 
-import android.Manifest;
-import android.app.SearchManager;
-import android.content.ContentValues;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.location.Location;
-import android.location.LocationManager;
-import android.os.Build;
-import android.os.Bundle;
-import android.os.Handler;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.EditText;
-import android.widget.ListView;
-import android.widget.ProgressBar;
-import android.widget.SimpleCursorAdapter;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import com.google.firebase.auth.FirebaseAuth;
 import com.yandex.mapkit.MapKitFactory;
+import com.yandex.mapkit.geometry.Point;
+import com.yandex.mapkit.geometry.Polyline;
+import com.yandex.mapkit.map.CameraPosition;
+import com.yandex.mapkit.map.Map;
+import com.yandex.mapkit.map.MapObjectCollection;
+import com.yandex.mapkit.map.PlacemarkMapObject;
 import com.yandex.mapkit.mapview.MapView;
+import com.yandex.runtime.image.ImageProvider;
 
-import java.text.DecimalFormat;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Locale;
 
-public class TrainingActivity extends AppCompatActivity implements LocListenerInterface {
+public class TrainingActivity extends AppCompatActivity implements LocListenerInterface, SensorEventListener {
     private TextView tvResDistance, tvTotal, tvVelocity;
     private Location lastLocation;
     private int distance;
@@ -50,18 +58,124 @@ public class TrainingActivity extends AppCompatActivity implements LocListenerIn
     private LocationManager locationManager;
     private MyLocListener myLocListener;
 
+    private SensorManager mSensorManager = null;
+    private Sensor stepSensor;
+    private int totalSteps = 0;
+    private int previewsTotalSteps = 0;
+    private TextView steps;
+
+    private MapView mapView;
+    private MapObjectCollection mapObjects;
+    private Map map;
+    @NonNull private PlacemarkMapObject Now_Geoposition;
+    private boolean pointIsSet;
+    @NonNull double shirota;
+    @NonNull double longg;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        MapKitFactory.setApiKey("e3460f52-0812-45df-8e03-9b6b2b641b5c");
         setContentView(R.layout.activity_training);
+
+        init();
+
+        MapKitFactory.initialize(this);
+        mapView = findViewById(R.id.mapview);
+
+        /**ОТОБРАЖЕНИЕ ЛОКАЦИИ, СОЗДАНИЕ ТОЧКИ И НАВЕДЕНИЕ НА НЕЕ КАМЕРЫ ПРИ ПЕРВОМ ЗАПУСКЕ ПРИЛОЖЕНИЯ */
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        @SuppressLint("MissingPermission") Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        longg = location.getLongitude();
+        shirota = location.getLatitude();
+        mapView.getMap().move(
+                new CameraPosition(new Point(shirota, longg), 14.0f, 0.0f, 0.0f));
+        Now_Geoposition = mapView.getMap().getMapObjects().addPlacemark(
+                new Point(shirota, longg));
+
         stopwatch = findViewById(R.id.chron);
         tempos = findViewById(R.id.tempo);
-        init();
-        checkPermissions();
+
+        steps = findViewById(R.id.steps);
+        resetSteps();
+        loadData();
+        mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+        stepSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
+
         runTimer();
 
     }
+    public void onStart() {
+        super.onStart();
+        MapKitFactory.getInstance().onStart();
+        mapView.onStart();
+    }
 
+    public void onStop() {
+        mapView.onStop();
+        MapKitFactory.getInstance().onStop();
+        super.onStop();
+    }
+    /**ТО ЖЕ САМОЕ ЧТО И ИНТЕРФЕЙС LOCATIONLISTENER, ДОБАВИЛ ЭТОТ ДЛЯ УДОБСТВА, ПОТОМ МОЖНО ВСЁ СДЕЛАТЬ В ОДНОМ МЕТОДЕ */
+    private LocationListener locationListener = new LocationListener() {
+        @Override
+        public void onLocationChanged(@NonNull Location location) {
+            showLocation(location);
+        }
+
+        @Override
+        public void onProviderDisabled(@NonNull String provider) {
+
+        }
+        @SuppressLint("MissingPermission")
+        @Override
+        public void onProviderEnabled(@NonNull String provider) {
+            showLocation(locationManager.getLastKnownLocation(provider));
+        }
+
+    };
+    @SuppressLint("MissingPermission")
+    protected void onResume() {
+        super.onResume();
+        /**ОБНОВЛЕНИЕ ЛОКАЦИИ КАЖДЫЕ 10 СЕКУНД
+         ИЛИ ПРИ КАЖДОМ ИЗМЕНЕНИИ МЕСТОПОЛОЖЕНИЯ */
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
+                1000 * 10, 0, locationListener);
+        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
+                1000 * 10, 0, locationListener);
+        /**РЕГИСТРАЦИЯ ШАГОВ */
+        if (stepSensor == null) {
+            Toast.makeText(this, "This device has no sensor", Toast.LENGTH_LONG).show();
+        } else {
+            mSensorManager.registerListener(this, stepSensor, SensorManager.SENSOR_DELAY_NORMAL);
+        }
+    }
+
+    protected void onPause(){
+        super.onPause();
+        mSensorManager.unregisterListener(this);
+        locationManager.removeUpdates(locationListener);
+    }
+
+    /** ОТОБРАЖЕНИЕ КОРРЕКТНОГО МЕСТОПОЛОЖЕНИЯ ТОЧКИ НА КАРТЕ
+     * (РАБОТАЕТ НЕЗАВИСИМО ОТ ТОГО, НАЧАТА ТРЕНИРОВКА ИЛИ НЕТ)
+     *
+     * ПОДКЛЮЧЕНИЕ К ПРОВАЙДЕРУ GPS ИЛИ NETWORK
+     */
+    private void showLocation(Location location){
+        if(location == null){
+            return;
+        }
+        if(location.getProvider().equals(LocationManager.GPS_PROVIDER)){
+            Now_Geoposition.setGeometry(new Point(location.getLatitude(), location.getLongitude()));
+        }
+        else if(location.getProvider().equals(LocationManager.NETWORK_PROVIDER)){
+            Location old_loc = new Location(location);
+            Now_Geoposition.setGeometry(new Point(location.getLatitude(), location.getLongitude()));
+            
+        }
+    }
     private void init() {
         tvTotal = findViewById(R.id.tvTotal);
         tvResDistance = findViewById(R.id.tvRest);
@@ -72,7 +186,6 @@ public class TrainingActivity extends AppCompatActivity implements LocListenerIn
         myLocListener = new MyLocListener();
         myLocListener.setLocListenerInterface(this);
         checkPermissions();
-
     }
 
     private void setDistance(String dis) {
@@ -80,6 +193,13 @@ public class TrainingActivity extends AppCompatActivity implements LocListenerIn
         rest_distance = Integer.parseInt(dis);
         distance = Integer.parseInt(dis);
         tvResDistance.setText("/" + dis);
+    }
+
+    /** МЕТОД ОТРИСОВКИ ЛИНИИ НА КАРТЕ(В РАЗРАБОТКЕ) */
+    public void drawLine(Location location1, Location location2){
+        Point pointA = new Point(location1.getLatitude(), location1.getLongitude()); // координаты точки A
+        Point pointB = new Point(location2.getLatitude(), location2.getLongitude()); // координаты точки B
+        mapView.getMap().getMapObjects().addPolyline(new Polyline(new ArrayList<>(Arrays.asList(pointA, pointB))));
     }
 
     private void showDialog() {
@@ -92,7 +212,7 @@ public class TrainingActivity extends AppCompatActivity implements LocListenerIn
                 AlertDialog ad = (AlertDialog) dialog;
                 EditText ed = ad.findViewById(R.id.edText);
                 if (ed != null) {
-                    if (!ed.getText().toString().equals("")) setDistance(ed.getText().toString());
+                    if (!ed.getText().toString().isEmpty()) setDistance(ed.getText().toString());
                 }
             }
         });
@@ -103,27 +223,19 @@ public class TrainingActivity extends AppCompatActivity implements LocListenerIn
     public void onClickDistance(View view) {
         showDialog();
     }
-
-    private void updateDistance(Location loc) {
-        if (loc.getSpeed() != 0 && lastLocation != null) {
+    private void updateDistance(Location loc) {/**ПОЧЕМУ ТО НЕ СЧИТАЕТ ДИСТАНЦИЮ (ИЛИ СЧИТАЕТ НЕПРАВИЛЬНО) */
+        if (lastLocation != null) {
             float d_distance = lastLocation.distanceTo(loc);
             if (distance > total_distance) total_distance += (int) d_distance;
-            //if (rest_distance > 0) rest_distance -= (int) d_distance;
             pb.setProgress(total_distance);
         }
         lastLocation = loc;
-        //tvResDistance.setText(String.valueOf(rest_distance));
         tvTotal.setText(String.valueOf(total_distance));
-
         String formattedSpeed = "" + Math.round(loc.getSpeed() * 3600 / 1000 * 10.0) / 10.0;
         tvVelocity.setText(formattedSpeed);
-
-
     }
 
-    public void onClickStart(View view) {
-        running = true;
-    }
+    public void onClickStart(View view) {running = true;}
 
     ///////// ОСТАНАВЛИВАЕТ ТРЕНИРОВКУ И ПОКАЗЫВАЕТ ДИАЛОГОВОЕ ОКНО //////////
     public void onClickStop(View view) {
@@ -137,33 +249,36 @@ public class TrainingActivity extends AppCompatActivity implements LocListenerIn
         dialog1.setArguments(args);
         dialog1.show(getSupportFragmentManager(), "custom");
 
-        int calories = 0;
-        //SQLiteDatabase sqLiteDatabase = dbHelperTraining.getWritableDatabase();
-        //ContentValues contentValues = new ContentValues();
-        //contentValues.put(DBHelperTraining.COLUMN_DISTANCE, total_distance);
-        //contentValues.put(DBHelperTraining.COLUMN_TEMPOFTRAINING, tempos.getText().toString());
-        //contentValues.put(DBHelperTraining.COLUMN_CALORIES, calories);
-        //contentValues.put(DBHelperTraining.COLUMN_TIMEOFTRAINING, stopwatch.getText().toString());
-//
-        //sqLiteDatabase.insert("training", null, contentValues);
+        previewsTotalSteps = totalSteps;
+        steps.setText("0");
+        savedData();
 
         stopwatch.setText(R.string.zero_stopwatch);
         tempos.setText("0:00");
         tvTotal.setText("0");
         total_distance = 0;
         seconds = 0;
+
+
     }
 
-
+    /**МЕТОД НЕИСПРАВНО РАБОТАЕТ, ПЭТОМУ ПОКА ОТКЛЮЧЕН */
     private void checkedTemp(Location loc) {
-        if(lastLocation != null && loc.getSpeed() != 0) {
-            float metrs = lastLocation.distanceTo(loc);
-            float time = 1000 / metrs;
-            int min = (int) time / 60;
-            int sec = (int) time % 60;
-            String endTemp = min + ":" + sec;
-            tempos.setText(endTemp);
-        }
+        final Handler handler = new Handler();
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                handler.postDelayed(this, 1000);
+                if (loc.getSpeed() != 0) {
+                    float time = 1000 / loc.getSpeed();
+                    int min = (int) time / 60;
+                    int sec = (int) time % 60;
+                    String endTemp = min + ":" + sec;
+                    tempos.setText(endTemp);
+                }
+                lastLocation = loc;
+            }
+        });
     }
 
     private void runTimer() {
@@ -208,9 +323,55 @@ public class TrainingActivity extends AppCompatActivity implements LocListenerIn
         }
 
     }
-
-    public void OnLocationChanged(Location loc) {
-        updateDistance(loc);
-        checkedTemp(loc);
+    public void OnLocationChanged (Location loc){
+        if (running) {
+            updateDistance(loc);
+        }
     }
+
+    /**ВСЕ ДЕЙСТВИЯ С Eventlistener ДЛЯ СЧЕТА И СОХРАНЕНИЯ ШАГОВ */
+
+    private void resetSteps(){
+        steps.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(TrainingActivity.this, "Удерживайте, чтобы сбросить шаги", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        steps.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                previewsTotalSteps = totalSteps;
+                steps.setText("0");
+                savedData();
+                return true;
+            }
+        });
+    }
+
+    private void savedData(){
+        SharedPreferences sharedPref = getSharedPreferences("myPref", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString("key1", String.valueOf(previewsTotalSteps));
+        editor.apply();
+    }
+
+    private  void loadData(){
+        SharedPreferences sharedPref = getSharedPreferences("myPref", Context.MODE_PRIVATE);
+        int savedNumber = Integer.valueOf(sharedPref.getString("key1", String.valueOf(0)));
+        previewsTotalSteps = savedNumber;
+    }
+    @Override
+    public void onSensorChanged(SensorEvent sensorEvent) {
+        if (sensorEvent.sensor.getType() == Sensor.TYPE_STEP_COUNTER && running){
+            totalSteps = (int) sensorEvent.values[0];
+            int currentSteps = totalSteps - previewsTotalSteps;
+            steps.setText(String.valueOf(currentSteps));
+        }
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int i) {}
+
 }
