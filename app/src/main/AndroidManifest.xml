@@ -20,9 +20,25 @@
         android:theme="@style/Theme.GPSTracker"
         tools:targetApi="31">
         <activity
+            android:name=".Index_strenght"
+            android:exported="false"
+            android:label="Показатель крепости телосложения"/>
+        <activity
+            android:name=".Index_Weight_height"
+            android:exported="false"
+            android:label="Весо-ростовой индекс"/>
+        <activity
+            android:name=".IndexPropartion"
+            android:exported="false"
+            android:label="Индекс ропорциональности тела" />
+        <activity
+            android:name=".IndexMassa"
+            android:exported="false"
+            android:label="Индекс массы тела" />
+        <activity
             android:name=".Health"
             android:exported="false"
-            android:label="Здоровье"/>
+            android:label="Здоровье" />
         <activity
             android:name=".LoginActivity"
             android:exported="false" />

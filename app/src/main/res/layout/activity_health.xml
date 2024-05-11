@@ -7,4 +7,106 @@
     android:layout_height="match_parent"
     tools:context=".Health">
 
+
+   <TextView
+       android:id="@+id/massa"
+       android:layout_width="284dp"
+       android:layout_height="38dp"
+       android:layout_marginTop="48dp"
+       android:text="1. Индекс массы тела"
+       android:textSize="25dp"
+       app:layout_constraintBottom_toTopOf="@+id/btn_massa"
+       app:layout_constraintEnd_toEndOf="parent"
+       app:layout_constraintHorizontal_bias="0.212"
+       app:layout_constraintStart_toStartOf="parent"
+       app:layout_constraintTop_toTopOf="parent"
+       app:layout_constraintVertical_bias="0.0"
+       tools:ignore="MissingConstraints" />
+
+   <TextView
+       android:id="@+id/proportion"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:layout_marginBottom="12dp"
+       android:text="2. Индекс пропорциональности"
+       android:textSize="25dp"
+       app:layout_constraintBottom_toTopOf="@+id/btn_proportion"
+       app:layout_constraintEnd_toEndOf="parent"
+       app:layout_constraintHorizontal_bias="0.742"
+       app:layout_constraintStart_toStartOf="parent"
+       tools:ignore="MissingConstraints" />
+
+   <TextView
+       android:id="@+id/weight"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:layout_marginBottom="4dp"
+       android:text="3. Весо-ростовой индекс"
+       android:textSize="25dp"
+       app:layout_constraintBottom_toTopOf="@+id/btn_weight"
+       app:layout_constraintEnd_toEndOf="parent"
+       app:layout_constraintHorizontal_bias="0.228"
+       app:layout_constraintStart_toStartOf="parent"
+       tools:ignore="MissingConstraints" />
+
+   <TextView
+       android:id="@+id/strength"
+       android:layout_width="383dp"
+       android:layout_height="61dp"
+       android:layout_marginBottom="16dp"
+       android:text="4. Показатель крепости телосложения"
+       android:textSize="25dp"
+       app:layout_constraintBottom_toTopOf="@+id/btn_strength"
+       app:layout_constraintEnd_toEndOf="parent"
+       app:layout_constraintHorizontal_bias="0.892"
+       app:layout_constraintStart_toStartOf="parent"
+       tools:ignore="MissingConstraints" />
+
+   <Button
+       android:id="@+id/btn_massa"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:layout_marginBottom="12dp"
+       android:text="имт"
+       app:layout_constraintBottom_toTopOf="@+id/proportion"
+       app:layout_constraintEnd_toEndOf="parent"
+       app:layout_constraintHorizontal_bias="0.164"
+       app:layout_constraintStart_toStartOf="parent"
+       tools:ignore="MissingConstraints" />
+
+   <Button
+       android:id="@+id/btn_proportion"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:layout_marginBottom="12dp"
+       android:text="пропорциональность"
+       app:layout_constraintBottom_toTopOf="@+id/weight"
+       app:layout_constraintEnd_toEndOf="parent"
+       app:layout_constraintHorizontal_bias="0.286"
+       app:layout_constraintStart_toStartOf="parent"
+       tools:ignore="MissingConstraints" />
+
+   <Button
+       android:id="@+id/btn_weight"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:layout_marginBottom="16dp"
+       android:text="весо-ростовой"
+       app:layout_constraintBottom_toTopOf="@+id/strength"
+       app:layout_constraintEnd_toEndOf="parent"
+       app:layout_constraintHorizontal_bias="0.213"
+       app:layout_constraintStart_toStartOf="parent"
+       tools:ignore="MissingConstraints" />
+
+   <Button
+       android:id="@+id/btn_strength"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:layout_marginBottom="256dp"
+       android:text="крепость тесосложения"
+       app:layout_constraintBottom_toBottomOf="parent"
+       app:layout_constraintEnd_toEndOf="parent"
+       app:layout_constraintHorizontal_bias="0.325"
+       app:layout_constraintStart_toStartOf="parent"
+       tools:ignore="MissingConstraints" />
 </androidx.constraintlayout.widget.ConstraintLayout>
