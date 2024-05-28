@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
@@ -7,106 +7,142 @@
     android:layout_height="match_parent"
     tools:context=".Health">
 
+    <LinearLayout
+        android:id="@+id/linear_height"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="20dp">
 
-   <TextView
-       android:id="@+id/massa"
-       android:layout_width="284dp"
-       android:layout_height="38dp"
-       android:layout_marginTop="48dp"
-       android:text="1. Индекс массы тела"
-       android:textSize="25dp"
-       app:layout_constraintBottom_toTopOf="@+id/btn_massa"
-       app:layout_constraintEnd_toEndOf="parent"
-       app:layout_constraintHorizontal_bias="0.212"
-       app:layout_constraintStart_toStartOf="parent"
-       app:layout_constraintTop_toTopOf="parent"
-       app:layout_constraintVertical_bias="0.0"
-       tools:ignore="MissingConstraints" />
+        <TextView
+            android:layout_width="265dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="25dp"
+            android:layout_marginTop="8dp"
+            android:text="Рост"
+            android:textColor="@color/black"
+            android:textSize="25dp" />
 
-   <TextView
-       android:id="@+id/proportion"
-       android:layout_width="wrap_content"
-       android:layout_height="wrap_content"
-       android:layout_marginBottom="12dp"
-       android:text="2. Индекс пропорциональности"
-       android:textSize="25dp"
-       app:layout_constraintBottom_toTopOf="@+id/btn_proportion"
-       app:layout_constraintEnd_toEndOf="parent"
-       app:layout_constraintHorizontal_bias="0.742"
-       app:layout_constraintStart_toStartOf="parent"
-       tools:ignore="MissingConstraints" />
+        <TextView
+            android:id="@+id/your_height"
+            android:layout_width="117dp"
+            android:layout_height="40dp"
+            android:gravity="center"
+            android:text="..."
+            android:textColor="@color/blue"
+            android:textSize="25dp" />
+    </LinearLayout>
 
-   <TextView
-       android:id="@+id/weight"
-       android:layout_width="wrap_content"
-       android:layout_height="wrap_content"
-       android:layout_marginBottom="4dp"
-       android:text="3. Весо-ростовой индекс"
-       android:textSize="25dp"
-       app:layout_constraintBottom_toTopOf="@+id/btn_weight"
-       app:layout_constraintEnd_toEndOf="parent"
-       app:layout_constraintHorizontal_bias="0.228"
-       app:layout_constraintStart_toStartOf="parent"
-       tools:ignore="MissingConstraints" />
+    <LinearLayout
+        android:id="@+id/linear_weight"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_below="@+id/linear_height"
+        android:layout_marginTop="18dp">
 
-   <TextView
-       android:id="@+id/strength"
-       android:layout_width="383dp"
-       android:layout_height="61dp"
-       android:layout_marginBottom="16dp"
-       android:text="4. Показатель крепости телосложения"
-       android:textSize="25dp"
-       app:layout_constraintBottom_toTopOf="@+id/btn_strength"
-       app:layout_constraintEnd_toEndOf="parent"
-       app:layout_constraintHorizontal_bias="0.892"
-       app:layout_constraintStart_toStartOf="parent"
-       tools:ignore="MissingConstraints" />
+        <TextView
+            android:layout_width="265dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="25dp"
+            android:layout_marginTop="8dp"
+            android:text="Вес"
+            android:textColor="@color/black"
+            android:textSize="25dp" />
 
-   <Button
-       android:id="@+id/btn_massa"
-       android:layout_width="wrap_content"
-       android:layout_height="wrap_content"
-       android:layout_marginBottom="12dp"
-       android:text="имт"
-       app:layout_constraintBottom_toTopOf="@+id/proportion"
-       app:layout_constraintEnd_toEndOf="parent"
-       app:layout_constraintHorizontal_bias="0.164"
-       app:layout_constraintStart_toStartOf="parent"
-       tools:ignore="MissingConstraints" />
+        <TextView
+            android:id="@+id/your_weight"
+            android:layout_width="117dp"
+            android:layout_height="40dp"
+            android:gravity="center"
+            android:text="..."
+            android:textColor="@color/blue"
+            android:textSize="25dp" />
+    </LinearLayout>
 
-   <Button
-       android:id="@+id/btn_proportion"
-       android:layout_width="wrap_content"
-       android:layout_height="wrap_content"
-       android:layout_marginBottom="12dp"
-       android:text="пропорциональность"
-       app:layout_constraintBottom_toTopOf="@+id/weight"
-       app:layout_constraintEnd_toEndOf="parent"
-       app:layout_constraintHorizontal_bias="0.286"
-       app:layout_constraintStart_toStartOf="parent"
-       tools:ignore="MissingConstraints" />
+    <LinearLayout
+        android:id="@+id/linear_long_of_step"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_below="@+id/linear_weight"
+        android:layout_marginTop="18dp">
 
-   <Button
-       android:id="@+id/btn_weight"
-       android:layout_width="wrap_content"
-       android:layout_height="wrap_content"
-       android:layout_marginBottom="16dp"
-       android:text="весо-ростовой"
-       app:layout_constraintBottom_toTopOf="@+id/strength"
-       app:layout_constraintEnd_toEndOf="parent"
-       app:layout_constraintHorizontal_bias="0.213"
-       app:layout_constraintStart_toStartOf="parent"
-       tools:ignore="MissingConstraints" />
+        <TextView
+            android:layout_width="265dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="25dp"
+            android:layout_marginTop="8dp"
+            android:text="Длина шага"
+            android:textColor="@color/black"
+            android:textSize="25dp" />
 
-   <Button
-       android:id="@+id/btn_strength"
-       android:layout_width="wrap_content"
-       android:layout_height="wrap_content"
-       android:layout_marginBottom="256dp"
-       android:text="крепость тесосложения"
-       app:layout_constraintBottom_toBottomOf="parent"
-       app:layout_constraintEnd_toEndOf="parent"
-       app:layout_constraintHorizontal_bias="0.325"
-       app:layout_constraintStart_toStartOf="parent"
-       tools:ignore="MissingConstraints" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <TextView
+            android:id="@+id/your_step"
+            android:layout_width="117dp"
+            android:layout_height="40dp"
+            android:layout_marginEnd="14dp"
+            android:gravity="center"
+            android:text="..."
+            android:textColor="@color/blue"
+            android:textSize="25dp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/linear_gender"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_below="@+id/linear_long_of_step"
+        android:layout_marginTop="18dp">
+
+        <TextView
+            android:layout_width="265dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="25dp"
+            android:layout_marginTop="8dp"
+            android:text="Пол"
+            android:textColor="@color/black"
+            android:textSize="25dp" />
+
+        <TextView
+            android:id="@+id/your_gender"
+            android:layout_width="117dp"
+            android:layout_height="40dp"
+            android:layout_marginEnd="14dp"
+            android:gravity="center"
+            android:text="..."
+            android:textColor="@color/blue"
+            android:textSize="25dp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/linear_circ_of_chest"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_below="@+id/linear_gender"
+        android:layout_marginTop="18dp">
+
+        <TextView
+            android:layout_width="265dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="25dp"
+            android:layout_marginTop="8dp"
+            android:text="Окружность грудной клетки"
+            android:textColor="@color/black"
+            android:layout_gravity="center_horizontal"
+            android:textSize="25dp" />
+
+        <TextView
+            android:id="@+id/your_chest"
+            android:layout_width="117dp"
+            android:layout_height="40dp"
+            android:layout_marginEnd="14dp"
+            android:gravity="center"
+            android:text="..."
+            android:textColor="@color/blue"
+            android:textSize="25dp" />
+    </LinearLayout>
+
+</RelativeLayout>

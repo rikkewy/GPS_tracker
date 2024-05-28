@@ -4,6 +4,9 @@
     <string name="dialog_button">Готово</string>
     <string name="dialog_aft_training">Тренировка завершена!</string>
     <string name="zero_stopwatch">0:00:00</string>
+    <string name="longOfChest">Окружность грудной /n клетки</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="proportion">Индекс пропорциональности позволяет определить тип грудной клетки</string>
 </resources>
