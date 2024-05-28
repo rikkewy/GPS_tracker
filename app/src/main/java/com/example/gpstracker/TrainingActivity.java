@@ -218,6 +218,7 @@ public class TrainingActivity extends AppCompatActivity implements LocListenerIn
         });
         builder.setView(cl);
         builder.show();
+
     }
 
     public void onClickDistance(View view) {

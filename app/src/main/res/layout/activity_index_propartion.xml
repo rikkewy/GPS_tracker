@@ -73,7 +73,7 @@
         app:layout_constraintVertical_bias="0.308" />
 
     <TextView
-        android:id="@+id/res1"
+        android:id="@+id/resultat"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Результат"

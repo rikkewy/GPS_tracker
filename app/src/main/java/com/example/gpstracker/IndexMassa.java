@@ -28,7 +28,7 @@ public class IndexMassa extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_index_massa);
+        setContentView(R.layout.main);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -37,9 +37,7 @@ public class IndexMassa extends AppCompatActivity {
         text = findViewById(R.id.textView);
         resul = findViewById(R.id.res);
         imt = findViewById(R.id.imt);
-        mas = findViewById(R.id.mas);
-        tal = findViewById(R.id.tal);
-        sum_but = findViewById(R.id.button);
+
 
     }
     public void sum(){

@@ -16,7 +16,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 public class Index_Weight_height extends AppCompatActivity {
     private TextView text3;
-    private TextView res2;
+    private TextView resul_imt;
     private ImageView weigt1;
     private EditText m1;
     private EditText t1;
@@ -34,7 +34,7 @@ public class Index_Weight_height extends AppCompatActivity {
             return insets;
         });
         text3 = findViewById(R.id.text3);
-        res2 = findViewById(R.id.res2);
+        resul_imt = findViewById(R.id.res2);
         weigt1 = findViewById(R.id.weight1);
         m1 = findViewById(R.id.m1);
         t1= findViewById(R.id.t1);
@@ -43,6 +43,6 @@ public class Index_Weight_height extends AppCompatActivity {
         public void sum(){
             int res;
             res = Integer.parseInt(m1.getText().toString()) /  Integer.parseInt(t1.getText().toString());
-            res2.setText("Ваш ИМТ" + res);
+            resul_imt.setText("Ваш ИМТ" + res);
     }
 }

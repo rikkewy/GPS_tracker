@@ -16,7 +16,7 @@ import androidx.core.view.WindowInsetsCompat;
 public class IndexPropartion extends AppCompatActivity {
     private TextView text1;
     private ImageView prop;
-    private TextView res1;
+    private TextView resul_proportion;
     private EditText chest;
     private EditText tall1;
     private Button btn;
@@ -34,7 +34,7 @@ public class IndexPropartion extends AppCompatActivity {
         });
         text1 = findViewById(R.id.text_propor);
         prop = findViewById(R.id.propt);
-        res1 = findViewById(R.id.res1);
+        resul_proportion = findViewById(R.id.resultat);
         chest = findViewById(R.id.og);
         tall1 = findViewById(R.id.bt_tall);
         btn = findViewById(R.id.btn_propsum);
@@ -42,6 +42,6 @@ public class IndexPropartion extends AppCompatActivity {
     public void mean(){
         int result1;
         result1 =   Integer.parseInt(chest.getText().toString()) /  Integer.parseInt(tall1.getText().toString()) *100;
-        res1.setText("Ваш результат" + result1);
+        resul_proportion.setText("Ваш результат" + result1);
     }
 }

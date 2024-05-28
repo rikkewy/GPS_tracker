@@ -7,142 +7,299 @@
     android:layout_height="match_parent"
     tools:context=".Health">
 
-    <LinearLayout
-        android:id="@+id/linear_height"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="20dp">
+        android:layout_height="match_parent">
 
-        <TextView
-            android:layout_width="265dp"
-            android:layout_height="40dp"
-            android:layout_marginStart="25dp"
-            android:layout_marginTop="8dp"
-            android:text="Рост"
-            android:textColor="@color/black"
-            android:textSize="25dp" />
-
-        <TextView
-            android:id="@+id/your_height"
-            android:layout_width="117dp"
-            android:layout_height="40dp"
-            android:gravity="center"
-            android:text="..."
-            android:textColor="@color/blue"
-            android:textSize="25dp" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/linear_weight"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_below="@+id/linear_height"
-        android:layout_marginTop="18dp">
-
-        <TextView
-            android:layout_width="265dp"
-            android:layout_height="40dp"
-            android:layout_marginStart="25dp"
-            android:layout_marginTop="8dp"
-            android:text="Вес"
-            android:textColor="@color/black"
-            android:textSize="25dp" />
-
-        <TextView
-            android:id="@+id/your_weight"
-            android:layout_width="117dp"
-            android:layout_height="40dp"
-            android:gravity="center"
-            android:text="..."
-            android:textColor="@color/blue"
-            android:textSize="25dp" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/linear_long_of_step"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_below="@+id/linear_weight"
-        android:layout_marginTop="18dp">
-
-        <TextView
-            android:layout_width="265dp"
-            android:layout_height="40dp"
-            android:layout_marginStart="25dp"
-            android:layout_marginTop="8dp"
-            android:text="Длина шага"
-            android:textColor="@color/black"
-            android:textSize="25dp" />
-
-        <TextView
-            android:id="@+id/your_step"
-            android:layout_width="117dp"
-            android:layout_height="40dp"
-            android:layout_marginEnd="14dp"
-            android:gravity="center"
-            android:text="..."
-            android:textColor="@color/blue"
-            android:textSize="25dp" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/linear_gender"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_below="@+id/linear_long_of_step"
-        android:layout_marginTop="18dp">
-
-        <TextView
-            android:layout_width="265dp"
-            android:layout_height="40dp"
-            android:layout_marginStart="25dp"
-            android:layout_marginTop="8dp"
-            android:text="Пол"
-            android:textColor="@color/black"
-            android:textSize="25dp" />
-
-        <TextView
-            android:id="@+id/your_gender"
-            android:layout_width="117dp"
-            android:layout_height="40dp"
-            android:layout_marginEnd="14dp"
-            android:gravity="center"
-            android:text="..."
-            android:textColor="@color/blue"
-            android:textSize="25dp" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/linear_circ_of_chest"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_below="@+id/linear_gender"
-        android:layout_marginTop="18dp">
-
-        <TextView
-            android:layout_width="265dp"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="25dp"
-            android:layout_marginTop="8dp"
-            android:text="Окружность грудной клетки"
-            android:textColor="@color/black"
-            android:layout_gravity="center_horizontal"
-            android:textSize="25dp" />
+            android:orientation="vertical" >
 
-        <TextView
-            android:id="@+id/your_chest"
-            android:layout_width="117dp"
-            android:layout_height="40dp"
-            android:layout_marginEnd="14dp"
-            android:gravity="center"
-            android:text="..."
-            android:textColor="@color/blue"
-            android:textSize="25dp" />
-    </LinearLayout>
+            <LinearLayout
+                android:id="@+id/linear_height"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:orientation="horizontal">
 
+                <TextView
+                    android:layout_width="265dp"
+                    android:layout_height="40dp"
+                    android:layout_marginStart="25dp"
+                    android:layout_marginTop="8dp"
+                    android:text="Рост"
+                    android:textColor="@color/black"
+                    android:textSize="25dp" />
+
+                <TextView
+                    android:id="@+id/your_height"
+                    android:layout_width="117dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="..."
+                    android:textColor="@color/blue"
+                    android:textSize="25dp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/linear_weight"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="18dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="265dp"
+                    android:layout_height="40dp"
+                    android:layout_marginStart="25dp"
+                    android:layout_marginTop="8dp"
+                    android:text="Вес"
+                    android:textColor="@color/black"
+                    android:textSize="25dp"
+
+                    />
+
+                <TextView
+                    android:id="@+id/your_weight"
+                    android:layout_width="117dp"
+                    android:layout_height="40dp"
+                    android:gravity="center"
+                    android:text="..."
+                    android:textColor="@color/blue"
+                    android:textSize="25dp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/linear_long_of_step"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="18dp"
+                android:orientation="horizontal"
+                android:layout_below = "@id/linear_height">
+
+                <TextView
+                    android:layout_width="265dp"
+                    android:layout_height="40dp"
+                    android:layout_marginStart="25dp"
+                    android:layout_marginTop="8dp"
+                    android:text="Длина шага"
+                    android:textColor="@color/black"
+                    android:textSize="25dp" />
+
+                <TextView
+                    android:id="@+id/your_step"
+                    android:layout_width="117dp"
+                    android:layout_height="40dp"
+                    android:layout_marginEnd="14dp"
+                    android:gravity="center"
+                    android:text="..."
+                    android:textColor="@color/blue"
+                    android:textSize="25dp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/linear_circ_of_chest"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="18dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="265dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginStart="25dp"
+                    android:layout_marginTop="8dp"
+                    android:text="Окружность грудной клетки"
+                    android:textColor="@color/black"
+                    android:textSize="25dp" />
+
+                <TextView
+                    android:id="@+id/your_chest"
+                    android:layout_width="117dp"
+                    android:layout_height="40dp"
+                    android:layout_marginEnd="14dp"
+                    android:gravity="center"
+                    android:text="..."
+                    android:textColor="@color/blue"
+                    android:textSize="25dp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/linear_gender"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="18dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/your_gender"
+                    android:layout_width="265dp"
+                    android:layout_height="40dp"
+                    android:layout_marginStart="25dp"
+                    android:layout_marginTop="8dp"
+                    android:text="Пол"
+                    android:textColor="@color/black"
+                    android:textSize="25dp" />
+                <TextView
+                    android:id="@+id/selection"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="26sp"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+                </TextView>
+
+                <Spinner
+                    android:id="@+id/spinner"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/selection"
+                    android:layout_marginLeft="35dp"/>
+
+            </LinearLayout>
+
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="18dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/textView"
+                    android:layout_width="369dp"
+                    android:layout_height="169dp"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="40dp"
+                    android:text="Индекс массы тела (ИМТ) – простое отношение веса к росту, часто используется для классификации ожирения и избыточного веса. Индекс рассчитывается как отношение веса тела в килограммах к квадрату роста в метрах."
+                    android:textColor="@color/black"
+                    android:textSize="20dp" />
+
+                <ImageView
+                    android:id="@+id/imt"
+                    android:layout_width="347dp"
+                    android:layout_height="386dp"
+                    android:layout_gravity="center"
+                    app:srcCompat="@drawable/imt" />
+
+                <TextView
+                    android:id="@+id/res"
+                    android:layout_width="137dp"
+                    android:layout_height="59dp"
+                    android:text="Результат"
+                    android:textColor="@color/black"
+                    android:textSize="20dp" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="18dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/text_propor"
+                    android:layout_width="373dp"
+                    android:layout_height="81dp"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="64dp"
+                    android:text="Индекс пропорциональности позволяет определить тип грудной клетки"
+                    android:textColor="@color/black"
+                    android:textSize="20dp" />
+
+                <ImageView
+                    android:id="@+id/propt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="32dp"
+                    app:srcCompat="@drawable/proportion" />
+
+                <TextView
+                    android:id="@+id/resul_prop"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Результат"
+                    android:textColor="@color/black"
+                    android:textSize="20dp"
+                    app:layout_constraintVertical_bias="0.129" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="18dp"
+                android:orientation="vertical">
+                <TextView
+                    android:id="@+id/text4"
+                    android:layout_width="370dp"
+                    android:layout_height="110dp"
+                    android:layout_marginTop="40dp"
+                    android:text="Показатель крепости телосложения выражает разницу между длиной тела и суммой массы и окружности грудной клетки на выдохе. "
+                    android:textColor="@color/black"
+                    android:layout_gravity="center"
+                    android:textSize="20dp"
+                     />
+
+                <ImageView
+                    android:id="@+id/telo"
+                    android:layout_width="388dp"
+                    android:layout_height="249dp"
+                    android:layout_marginTop="4dp"
+                    android:layout_gravity="center"
+                    app:srcCompat="@drawable/telosloch" />
+
+
+                <TextView
+                    android:id="@+id/resul_strenght"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:text="Результат"
+                    android:textColor="@color/black"
+                    android:textSize="20dp"
+                     />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="18dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/text3"
+                    android:layout_width="367dp"
+                    android:layout_height="168dp"
+                    android:layout_marginTop="28dp"
+                    android:text="Весо-ростовой индекс Кетле определяется отношением массы тела (в граммах) к росту (в сантиметрах). Средняя величина для мужчин колеблется в пределах 350-400 г/см, для женщин – 340-390 г/см. "
+                    android:textColor="@color/black"
+                    android:textSize="20dp"
+                    android:layout_gravity="center"
+                     />
+
+                <ImageView
+                    android:id="@+id/weight1"
+                    android:layout_width="383dp"
+                    android:layout_height="220dp"
+                    app:srcCompat="@drawable/weight1"
+                    android:layout_gravity="center"
+                   />
+
+                <TextView
+                    android:id="@+id/resul_weight_height"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Результат"
+                    android:textColor="@color/black"
+                    android:textSize="20dp"
+                     />
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
 </RelativeLayout>

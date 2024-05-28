@@ -17,7 +17,7 @@ import java.util.PrimitiveIterator;
 
 public class Index_strenght extends AppCompatActivity {
     private TextView text4;
-    private TextView textView4;
+    private TextView resul_strenght;
     private ImageView telo;
     private EditText m2;
     private EditText t2;
@@ -36,7 +36,7 @@ public class Index_strenght extends AppCompatActivity {
             return insets;
         });
         text4 = findViewById(R.id.text4);
-        textView4 = findViewById(R.id.textView4);
+        resul_strenght = findViewById(R.id.resul_strenght);
         telo = findViewById(R.id.telo);
         m2 = findViewById(R.id.m2);
         t2 =  findViewById(R.id.t2);
@@ -46,6 +46,6 @@ public class Index_strenght extends AppCompatActivity {
     public void resultat(){
         int ressul = 0;
         ressul = Integer.parseInt(t2.getText().toString()) - (Integer.parseInt(m2.getText().toString()) + Integer.parseInt(og2.getText().toString()));
-        textView4.setText("Ваш результат" + ressul);
+        resul_strenght.setText("Ваш результат" + ressul);
     }
 }
