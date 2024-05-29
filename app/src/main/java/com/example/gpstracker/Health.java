@@ -39,6 +39,7 @@ public class Health extends AppCompatActivity {
     private TextView gender;
     private TextView circ_of_chest;
     private TextView selection;
+    private Button btnResult;
     private Spinner spinner;
     private  String[] genders = { "М", "Ж"};
 
@@ -55,6 +56,7 @@ public class Health extends AppCompatActivity {
 
         });
 
+        btnResult = findViewById(R.id.btn_result);
         rost = findViewById(R.id.your_height);
         wes = findViewById(R.id.your_weight);
         long_of_step = findViewById(R.id.your_step);
@@ -64,7 +66,7 @@ public class Health extends AppCompatActivity {
         resul_prop =  findViewById(R.id.resul_prop);
         resul_strenght = findViewById(R.id.resul_strenght);
         resul_weight_height = findViewById(R.id.resul_weight_height);
-        setResul();
+
 
         spinner = findViewById(R.id.spinner);
         selection = findViewById(R.id.selection);
@@ -76,33 +78,38 @@ public class Health extends AppCompatActivity {
         spinner.setAdapter(adapter);
 
 
+        btnResult.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                setResul();
+            }
+        });
 
         rost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 showDialogRost();
-                setResul();
+
             }
         });
         wes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 showDialogWes();
-                setResul();
+
             }
         });
         long_of_step.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 showDialog_long_of_step();
-                setResul();
+
             }
         });
         circ_of_chest.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 showDialogCirc();
-                setResul();
             }
         });
     }
@@ -111,6 +118,37 @@ public class Health extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
+        SharedPreferences sharedPref = getSharedPreferences("myPref1", Context.MODE_PRIVATE);
+        String rost2 = sharedPref.getString("rost", "");
+        if (!rost2.equals("") ) {
+            rost.setText(rost2);
+        }
+        SharedPreferences sharedPref1 = getSharedPreferences("myPref2", Context.MODE_PRIVATE);
+        String wes2 = sharedPref1.getString("wes", "");
+        if (!wes2.equals("")) {
+            wes.setText(wes2);
+        }
+        SharedPreferences sharedPref2 = getSharedPreferences("myPref4", Context.MODE_PRIVATE);
+        String circ2 =sharedPref2.getString("circ", "" );
+        if(!circ2.equals("")) {
+            circ_of_chest.setText(circ2);
+        }
+        SharedPreferences sharedPref3 = getSharedPreferences("myPref3", Context.MODE_PRIVATE);
+        String step1 =sharedPref3.getString("step", "" );
+        if(!step1.equals("")) {
+            long_of_step.setText(step1);
+        }
+
+        SharedPreferences sharedPref5 = getSharedPreferences("myPref5", Context.MODE_PRIVATE);
+        int gender =sharedPref5.getInt("genders", 0 );
+        if(gender!=0) spinner.setSelection(gender);
+    }
+    public void onPause(){
+        super.onPause();
+        SharedPreferences sharedPref5 = getSharedPreferences("myPref5", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref5.edit();
+        editor.putInt("genders", spinner.getSelectedItemPosition());
+        editor.apply();
     }
 
     public void setResul(){
@@ -134,15 +172,21 @@ public class Health extends AppCompatActivity {
          int circ2 = Integer.valueOf(sharedPref2.getString("circ", String.valueOf(0)));
          circ_mean = circ2;
 
-         if(rost_mean != 0 && wes_mean !=0 && circ_mean!= 0 ) {
+         if(rost_mean != 0 && wes_mean !=0) {
              res1 = (int) (wes_mean /  (rost_mean *rost_mean / 10000.0));
              resul_imt.setText("Ваш ИМТ:" + " "  + res1);
-             res2 = (int)(( ((double)circ_mean /  rost_mean) )* 100.0);
-             resul_prop.setText("Ваш результат:" + " " +  res2);
-             res3 = rost_mean - (wes_mean + circ_mean);
-             resul_strenght.setText("Ваш результат:" + " " + res3);
              res4 = wes_mean * 1000 / rost_mean;
              resul_weight_height.setText("Ваш результат" + " "+ res4);
+         }
+
+         if (rost_mean != 0 && circ_mean!= 0){
+             res2 = (int)(( ((double)circ_mean /  rost_mean) )* 100.0);
+             resul_prop.setText("Ваш результат:" + " " +  res2);
+         }
+
+         if(rost_mean != 0 && wes_mean != 0 && circ_mean  != 0){
+             res3 = rost_mean - (wes_mean + circ_mean);
+             resul_strenght.setText("Ваш результат:" + " " + res3);
          }
    }
     /** ДИОЛОГ С РОСТОМ */
