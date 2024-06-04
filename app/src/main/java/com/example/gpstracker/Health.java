@@ -11,6 +11,7 @@ import android.graphics.drawable.AdaptiveIconDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -69,6 +70,22 @@ public class Health extends AppCompatActivity {
 
 
         spinner = findViewById(R.id.spinner);
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                selection.setText(String.valueOf(spinner.getSelectedItem()));
+                SharedPreferences sharedPref5 = getSharedPreferences("myPref5", Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPref5.edit();
+                editor.putInt("genders", spinner.getSelectedItemPosition());
+                editor.apply();
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                return;
+            }
+        });
         selection = findViewById(R.id.selection);
         // Создаем адаптер ArrayAdapter с помощью массива строк и стандартной разметки элемета spinner
         ArrayAdapter<String> adapter = new ArrayAdapter(this, android.R.layout.simple_spinner_item, genders);
@@ -76,7 +93,6 @@ public class Health extends AppCompatActivity {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         // Применяем адаптер к элементу spinner
         spinner.setAdapter(adapter);
-
 
         btnResult.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -145,10 +161,10 @@ public class Health extends AppCompatActivity {
     }
     public void onPause(){
         super.onPause();
-        SharedPreferences sharedPref5 = getSharedPreferences("myPref5", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPref5.edit();
-        editor.putInt("genders", spinner.getSelectedItemPosition());
-        editor.apply();
+        //SharedPreferences sharedPref5 = getSharedPreferences("myPref5", Context.MODE_PRIVATE);
+        //SharedPreferences.Editor editor = sharedPref5.edit();
+        //editor.putInt("genders", spinner.getSelectedItemPosition());
+        //editor.apply();
     }
 
     public void setResul(){
@@ -249,7 +265,7 @@ public class Health extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int which) {
                 AlertDialog ad = (AlertDialog) dialog;
                 EditText ed = ad.findViewById(R.id.longStep);
-                if (ed != null && Integer.parseInt(ed.getText().toString()) < 50) {
+                if (ed != null && Integer.parseInt(ed.getText().toString()) < 100 && Integer.parseInt(ed.getText().toString()) > 30) {
                     SharedPreferences sharedPref = getSharedPreferences("myPref3", Context.MODE_PRIVATE);
                     SharedPreferences.Editor editor = sharedPref.edit();
                     editor.putString("step", String.valueOf(ed.getText().toString()));

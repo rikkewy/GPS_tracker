@@ -4,6 +4,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.hardware.Sensor;
@@ -28,9 +29,17 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.yandex.mapkit.MapKit;
 import com.yandex.mapkit.MapKitFactory;
 import com.yandex.mapkit.geometry.Point;
 import com.yandex.mapkit.geometry.Polyline;
+import com.yandex.mapkit.internal.MapKitBinding;
 import com.yandex.mapkit.map.CameraPosition;
 import com.yandex.mapkit.map.Map;
 import com.yandex.mapkit.map.MapObjectCollection;
@@ -41,13 +50,14 @@ import com.yandex.runtime.image.ImageProvider;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Locale;
 
 public class TrainingActivity extends AppCompatActivity implements LocListenerInterface, SensorEventListener {
     private TextView tvResDistance, tvTotal, tvVelocity;
     private Location lastLocation;
     private int distance;
-    private int total_distance;
+    private int total_distance = 0;
     private int rest_distance;
     private ProgressBar pb;
     private int seconds;
@@ -68,10 +78,21 @@ public class TrainingActivity extends AppCompatActivity implements LocListenerIn
     private MapObjectCollection mapObjects;
     private Map map;
     @NonNull private PlacemarkMapObject Now_Geoposition;
-    private boolean pointIsSet;
     @NonNull double shirota;
     @NonNull double longg;
+    Location lastKnowLoc;
+    double lastLongitude;
+    double lastLatitude;
+    boolean firstTimeChangeLoc = true;
 
+    private DatabaseReference mDatabase;
+    public java.util.Map<String, Boolean> stars = new HashMap<>();
+
+    int countOfTraining = 1;
+    String nameOfTraining = "";
+
+
+    @SuppressLint("MissingPermission")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -87,13 +108,13 @@ public class TrainingActivity extends AppCompatActivity implements LocListenerIn
         /**ОТОБРАЖЕНИЕ ЛОКАЦИИ, СОЗДАНИЕ ТОЧКИ И НАВЕДЕНИЕ НА НЕЕ КАМЕРЫ ПРИ ПЕРВОМ ЗАПУСКЕ ПРИЛОЖЕНИЯ */
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         @SuppressLint("MissingPermission") Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-        longg = location.getLongitude();
-        shirota = location.getLatitude();
+        longg = location != null ? location.getLongitude() : 0;
+        shirota = location != null ? location.getLatitude() : 0;
+        lastKnowLoc = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         mapView.getMap().move(
                 new CameraPosition(new Point(shirota, longg), 14.0f, 0.0f, 0.0f));
         Now_Geoposition = mapView.getMap().getMapObjects().addPlacemark(
-                new Point(shirota, longg));
-
+             new Point(shirota, longg));
         stopwatch = findViewById(R.id.chron);
         tempos = findViewById(R.id.tempo);
 
@@ -102,9 +123,11 @@ public class TrainingActivity extends AppCompatActivity implements LocListenerIn
         loadData();
         mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         stepSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
-
         runTimer();
 
+        firstTimeChangeLoc = true;
+
+        mDatabase = FirebaseDatabase.getInstance().getReference();
     }
     public void onStart() {
         super.onStart();
@@ -119,9 +142,24 @@ public class TrainingActivity extends AppCompatActivity implements LocListenerIn
     }
     /**ТО ЖЕ САМОЕ ЧТО И ИНТЕРФЕЙС LOCATIONLISTENER, ДОБАВИЛ ЭТОТ ДЛЯ УДОБСТВА, ПОТОМ МОЖНО ВСЁ СДЕЛАТЬ В ОДНОМ МЕТОДЕ */
     private LocationListener locationListener = new LocationListener() {
+        @SuppressLint("MissingPermission")
         @Override
         public void onLocationChanged(@NonNull Location location) {
+            lastLatitude = lastKnowLoc.getLatitude();
+            lastLongitude = lastKnowLoc.getLongitude();
+            if(!firstTimeChangeLoc)drawLine(lastLatitude, lastLongitude, location);
+
+            float d_distance = lastKnowLoc.distanceTo(location);
+            if (distance > total_distance) total_distance += (int) d_distance;
+            pb.setProgress(total_distance);
+            tvTotal.setText(String.valueOf(total_distance));
+
+            String formattedSpeed = "" + Math.round(location.getSpeed() * 3600 / 1000 * 10.0) / 10.0;
+            tvVelocity.setText(formattedSpeed);
+
+            lastKnowLoc = location;
             showLocation(location);
+            firstTimeChangeLoc = false;
         }
 
         @Override
@@ -156,6 +194,7 @@ public class TrainingActivity extends AppCompatActivity implements LocListenerIn
         super.onPause();
         mSensorManager.unregisterListener(this);
         locationManager.removeUpdates(locationListener);
+
     }
 
     /** ОТОБРАЖЕНИЕ КОРРЕКТНОГО МЕСТОПОЛОЖЕНИЯ ТОЧКИ НА КАРТЕ
@@ -171,9 +210,7 @@ public class TrainingActivity extends AppCompatActivity implements LocListenerIn
             Now_Geoposition.setGeometry(new Point(location.getLatitude(), location.getLongitude()));
         }
         else if(location.getProvider().equals(LocationManager.NETWORK_PROVIDER)){
-            Location old_loc = new Location(location);
             Now_Geoposition.setGeometry(new Point(location.getLatitude(), location.getLongitude()));
-            
         }
     }
     private void init() {
@@ -185,7 +222,6 @@ public class TrainingActivity extends AppCompatActivity implements LocListenerIn
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         myLocListener = new MyLocListener();
         myLocListener.setLocListenerInterface(this);
-        checkPermissions();
     }
 
     private void setDistance(String dis) {
@@ -196,8 +232,8 @@ public class TrainingActivity extends AppCompatActivity implements LocListenerIn
     }
 
     /** МЕТОД ОТРИСОВКИ ЛИНИИ НА КАРТЕ(В РАЗРАБОТКЕ) */
-    public void drawLine(Location location1, Location location2){
-        Point pointA = new Point(location1.getLatitude(), location1.getLongitude()); // координаты точки A
+    public void drawLine(double lastLatitude, double lastLongitude, Location location2){
+        Point pointA = new Point(lastLatitude, lastLongitude); // координаты точки A
         Point pointB = new Point(location2.getLatitude(), location2.getLongitude()); // координаты точки B
         mapView.getMap().getMapObjects().addPolyline(new Polyline(new ArrayList<>(Arrays.asList(pointA, pointB))));
     }
@@ -225,21 +261,22 @@ public class TrainingActivity extends AppCompatActivity implements LocListenerIn
         showDialog();
     }
     private void updateDistance(Location loc) {/**ПОЧЕМУ ТО НЕ СЧИТАЕТ ДИСТАНЦИЮ (ИЛИ СЧИТАЕТ НЕПРАВИЛЬНО) */
-        if (lastLocation != null) {
-            float d_distance = lastLocation.distanceTo(loc);
-            if (distance > total_distance) total_distance += (int) d_distance;
-            pb.setProgress(total_distance);
-        }
-        lastLocation = loc;
-        tvTotal.setText(String.valueOf(total_distance));
-        String formattedSpeed = "" + Math.round(loc.getSpeed() * 3600 / 1000 * 10.0) / 10.0;
-        tvVelocity.setText(formattedSpeed);
+        //if (lastKnowLoc != null) {
+        //    float d_distance = lastKnowLoc.distanceTo(loc);
+        //    if (distance > total_distance) total_distance += (int) d_distance;
+        //    pb.setProgress(total_distance);
+        //}
+        //lastKnowLoc = loc;
+        //tvTotal.setText(String.valueOf(total_distance));
+        //String formattedSpeed = "" + Math.round(loc.getSpeed() * 3600 / 1000 * 10.0) / 10.0;
+        //tvVelocity.setText(formattedSpeed);
     }
 
     public void onClickStart(View view) {running = true;}
 
     ///////// ОСТАНАВЛИВАЕТ ТРЕНИРОВКУ И ПОКАЗЫВАЕТ ДИАЛОГОВОЕ ОКНО //////////
     public void onClickStop(View view) {
+        comp();
         running = false;
         String str =
                 "Дистанция: " + String.valueOf(total_distance) + "\n" +
@@ -260,8 +297,19 @@ public class TrainingActivity extends AppCompatActivity implements LocListenerIn
         total_distance = 0;
         seconds = 0;
 
+    }
+
+    public Object comp() {
+        HashMap<String, Object> userInfo = new HashMap<>();
+        userInfo.put("steps", totalSteps);
+        userInfo.put("dis", total_distance);
+        nameOfTraining = "Training" + String.valueOf(countOfTraining);
+        countOfTraining++;
+        return mDatabase.child("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child(nameOfTraining)
+                .setValue(userInfo);
 
     }
+
 
     /**МЕТОД НЕИСПРАВНО РАБОТАЕТ, ПЭТОМУ ПОКА ОТКЛЮЧЕН */
     private void checkedTemp(Location loc) {
@@ -301,29 +349,7 @@ public class TrainingActivity extends AppCompatActivity implements LocListenerIn
     }
     //^^^^^^^^^^^^^^^^^^^^^^^^^^^СЕКУНДОМЕР^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == 100 && grantResults[0] == RESULT_OK) {
-            checkPermissions();
 
-        } else {
-            Toast.makeText(this, "No GPS permissions", Toast.LENGTH_SHORT).show();
-
-        }
-    }
-
-    private void checkPermissions() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},
-                    100);
-
-        } else {
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2, 1, myLocListener);
-        }
-
-    }
     public void OnLocationChanged (Location loc){
         if (running) {
             updateDistance(loc);

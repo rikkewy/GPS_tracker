@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
+    android:theme="@style/Theme.HealthActivity"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".Health">
@@ -14,7 +15,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical" >
+            android:orientation="vertical"
+            android:layout_marginTop="21dp">
 
             <LinearLayout
                 android:id="@+id/linear_height"
@@ -176,15 +178,23 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="18dp"
+                android:layout_marginTop="35dp"
                 android:orientation="vertical">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Индекс массы тела"
+                    android:layout_gravity="center"
+                    android:textSize="25dp"
+                    android:textColor="@color/blue"
+                    />
 
                 <TextView
                     android:id="@+id/textView"
                     android:layout_width="369dp"
                     android:layout_height="169dp"
                     android:layout_gravity="center"
-                    android:layout_marginTop="40dp"
+                    android:layout_marginTop="7dp"
                     android:text="Индекс массы тела (ИМТ) – простое отношение веса к росту, часто используется для классификации ожирения и избыточного веса. Индекс рассчитывается как отношение веса тела в килограммах к квадрату роста в метрах."
                     android:textColor="@color/black"
                     android:textSize="20dp" />
@@ -201,21 +211,31 @@
                     android:layout_width="137dp"
                     android:layout_height="59dp"
                     android:text="Результат"
+                    android:layout_gravity="center"
                     android:textColor="@color/black"
-                    android:textSize="20dp" />
+                    android:textSize="20dp"
+                    android:background="@drawable/shape_rect"
+                    android:layout_marginTop="13dp"/>
             </LinearLayout>
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="18dp"
                 android:orientation="vertical">
-
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Индекс пропорциональности"
+                    android:layout_gravity="center"
+                    android:textSize="25dp"
+                    android:textColor="@color/blue"
+                    />
                 <TextView
                     android:id="@+id/text_propor"
                     android:layout_width="373dp"
                     android:layout_height="81dp"
                     android:layout_gravity="center"
-                    android:layout_marginTop="64dp"
+                    android:layout_marginTop="7dp"
                     android:text="Индекс пропорциональности позволяет определить тип грудной клетки"
                     android:textColor="@color/black"
                     android:textSize="20dp" />
@@ -235,18 +255,29 @@
                     android:text="Результат"
                     android:textColor="@color/black"
                     android:textSize="20dp"
-                    app:layout_constraintVertical_bias="0.129" />
+                    android:layout_gravity="center"
+                    android:layout_marginTop="13dp"
+                    />
             </LinearLayout>
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="18dp"
+                android:layout_marginTop="40dp"
                 android:orientation="vertical">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Индекс Пинье"
+                    android:layout_gravity="center"
+                    android:textSize="25dp"
+                    android:textColor="@color/blue"
+                    />
+
                 <TextView
                     android:id="@+id/text4"
                     android:layout_width="370dp"
                     android:layout_height="110dp"
-                    android:layout_marginTop="40dp"
+                    android:layout_marginTop="7dp"
                     android:text="Показатель крепости телосложения выражает разницу между длиной тела и суммой массы и окружности грудной клетки на выдохе. "
                     android:textColor="@color/black"
                     android:layout_gravity="center"
@@ -266,24 +297,34 @@
                     android:id="@+id/resul_strenght"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
+                    android:layout_marginTop="13dp"
                     android:text="Результат"
                     android:textColor="@color/black"
                     android:textSize="20dp"
-                     />
+                    android:layout_gravity="center"
+                    />
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="18dp"
+                android:layout_marginTop="40dp"
                 android:orientation="vertical">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Весо-ростовой индекс Кетле"
+                    android:layout_gravity="center"
+                    android:textSize="25dp"
+                    android:textColor="@color/blue"
+                    />
+
 
                 <TextView
                     android:id="@+id/text3"
                     android:layout_width="367dp"
                     android:layout_height="168dp"
-                    android:layout_marginTop="28dp"
+                    android:layout_marginTop="7dp"
                     android:text="Весо-ростовой индекс Кетле определяется отношением массы тела (в граммах) к росту (в сантиметрах). Средняя величина для мужчин колеблется в пределах 350-400 г/см, для женщин – 340-390 г/см. "
                     android:textColor="@color/black"
                     android:textSize="20dp"
@@ -305,7 +346,9 @@
                     android:text="Результат"
                     android:textColor="@color/black"
                     android:textSize="20dp"
-                     />
+                    android:layout_marginBottom="20dp"
+                    android:layout_marginTop="13dp"
+                    android:layout_gravity="center"/>
             </LinearLayout>
 
         </LinearLayout>

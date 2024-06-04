@@ -56,4 +56,5 @@ dependencies {
     implementation("com.google.firebase:firebase-analytics")
 
     implementation ("com.yandex.android:maps.mobile:4.5.1-lite")
+    implementation ("com.android.support:recyclerview-v7:27.1.1")
 }
