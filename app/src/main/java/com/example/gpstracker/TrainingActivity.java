@@ -89,7 +89,7 @@ public class TrainingActivity extends AppCompatActivity implements LocListenerIn
     public java.util.Map<String, Boolean> stars = new HashMap<>();
 
     int countOfTraining = 1;
-    String nameOfTraining = "";
+    public String nameOfTraining = "";
 
 
     @SuppressLint("MissingPermission")
@@ -128,7 +128,12 @@ public class TrainingActivity extends AppCompatActivity implements LocListenerIn
         firstTimeChangeLoc = true;
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
+        SharedPreferences sharedPref = getSharedPreferences("train", Context.MODE_PRIVATE);
+        countOfTraining = Integer.valueOf(sharedPref.getString("count_train", String.valueOf(1)));
     }
+
+
+
     public void onStart() {
         super.onStart();
         MapKitFactory.getInstance().onStart();
@@ -138,6 +143,11 @@ public class TrainingActivity extends AppCompatActivity implements LocListenerIn
     public void onStop() {
         mapView.onStop();
         MapKitFactory.getInstance().onStop();
+
+        SharedPreferences sharedPref = getSharedPreferences("train", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString("count_train", String.valueOf(countOfTraining));
+        editor.apply();
         super.onStop();
     }
     /**ТО ЖЕ САМОЕ ЧТО И ИНТЕРФЕЙС LOCATIONLISTENER, ДОБАВИЛ ЭТОТ ДЛЯ УДОБСТВА, ПОТОМ МОЖНО ВСЁ СДЕЛАТЬ В ОДНОМ МЕТОДЕ */
@@ -176,6 +186,8 @@ public class TrainingActivity extends AppCompatActivity implements LocListenerIn
     @SuppressLint("MissingPermission")
     protected void onResume() {
         super.onResume();
+        SharedPreferences sharedPref = getSharedPreferences("train", Context.MODE_PRIVATE);
+        countOfTraining = Integer.valueOf(sharedPref.getString("count_train", String.valueOf(1)));
         /**ОБНОВЛЕНИЕ ЛОКАЦИИ КАЖДЫЕ 10 СЕКУНД
          ИЛИ ПРИ КАЖДОМ ИЗМЕНЕНИИ МЕСТОПОЛОЖЕНИЯ */
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
@@ -195,6 +207,10 @@ public class TrainingActivity extends AppCompatActivity implements LocListenerIn
         mSensorManager.unregisterListener(this);
         locationManager.removeUpdates(locationListener);
 
+        SharedPreferences sharedPref = getSharedPreferences("train", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString("count_train", String.valueOf(countOfTraining));
+        editor.apply();
     }
 
     /** ОТОБРАЖЕНИЕ КОРРЕКТНОГО МЕСТОПОЛОЖЕНИЯ ТОЧКИ НА КАРТЕ
@@ -299,15 +315,20 @@ public class TrainingActivity extends AppCompatActivity implements LocListenerIn
 
     }
 
-    public Object comp() {
+    public void comp() {
         HashMap<String, Object> userInfo = new HashMap<>();
         userInfo.put("steps", totalSteps);
         userInfo.put("dis", total_distance);
+        SharedPreferences sharedPref = getSharedPreferences("train", Context.MODE_PRIVATE);
+        countOfTraining = Integer.valueOf(sharedPref.getString("count_train", String.valueOf(1)));
         nameOfTraining = "Training" + String.valueOf(countOfTraining);
-        countOfTraining++;
-        return mDatabase.child("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child(nameOfTraining)
+        mDatabase.child("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child(nameOfTraining)
                 .setValue(userInfo);
-
+        countOfTraining++;
+        SharedPreferences sharedPref1 = getSharedPreferences("train", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref1.edit();
+        editor.putString("count_train", String.valueOf(countOfTraining));
+        editor.apply();
     }
 
 

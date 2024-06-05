@@ -27,13 +27,17 @@ public class TrainingViewAdapter extends RecyclerView.Adapter<TrainingViewAdapte
         return new ViewHolder(view);
     }
 
+    //public void set(TrainingView trainingView){
+    //    this.trainings.add(trainingView);
+    //    notifyDataSetChanged();
+    //}
 
     @Override
     public void onBindViewHolder(TrainingViewAdapter.ViewHolder holder, int position) {
         TrainingView trainingView = trainings.get(position);
-        holder.dateOfTrainingEt.setText(trainingView.getDateOfTraining());
-        holder.distanceOfTrainingEt.setText(trainingView.getDistanceOfTraining());
-        holder.timeOfTrainingEt.setText(trainingView.getTimeOfTraining());
+        holder.dateOfTrainingEt.setText(String.valueOf(trainingView.getDateOfTraining()));
+        holder.distanceOfTrainingEt.setText(String.valueOf(trainingView.getDistanceOfTraining()));
+        holder.timeOfTrainingEt.setText(String.valueOf(trainingView.getTimeOfTraining()));
     }
 
     @Override

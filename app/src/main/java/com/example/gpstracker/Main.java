@@ -20,8 +20,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -29,6 +32,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class Main extends AppCompatActivity implements LocListenerInterface{
 
@@ -37,6 +41,8 @@ public class Main extends AppCompatActivity implements LocListenerInterface{
     private MyLocListener myLocListener;
     ArrayList<TrainingView> trainingViewArrayList = new ArrayList<TrainingView>();
     private DatabaseReference mDatabase;
+    FirebaseAuth mAuth;
+    TrainingViewAdapter adapter;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -66,31 +72,29 @@ public class Main extends AppCompatActivity implements LocListenerInterface{
         setInitialData();
         RecyclerView recyclerView = findViewById(R.id.list);
         // создаем адаптер
-        TrainingViewAdapter adapter = new TrainingViewAdapter(this, trainingViewArrayList);
+        adapter = new TrainingViewAdapter(this, trainingViewArrayList);
         // устанавливаем для списка адаптер
         recyclerView.setAdapter(adapter);
+
         mDatabase = FirebaseDatabase.getInstance().getReference();
+        FirebaseUser user = mAuth.getCurrentUser();
 
-
-    }
-
-    public void getData(){
-        ValueEventListener trainingListener = new ValueEventListener() {
+        mDatabase.child(user.getUid()).addValueEventListener(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                trainingViewArrayList = snapshot.child(user.getUid()).getValue();
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError) {
+            public void onCancelled(@NonNull DatabaseError error) {
 
             }
-        };
-        mDatabase.addValueEventListener(trainingListener);
+        });
     }
+
     private void setInitialData(){
 
-        //trainingViewArrayList.add(new TrainingView ("Бразилия", "Бразилиа", );
+        //trainingViewArrayList.add(new TrainingView("jj", 0, ""));
         //states.add(new State ("Аргентина", "Буэнос-Айрес", R.drawable.argentina));
         //states.add(new State ("Колумбия", "Богота", R.drawable.columbia));
         //states.add(new State ("Уругвай", "Монтевидео", R.drawable.uruguai));
