@@ -2,10 +2,10 @@ package com.example.gpstracker;
 
 public class TrainingView {
     public String dateOfTraining;
-    public int distanceOfTraining;
+    public Object distanceOfTraining;
     public String timeOfTraining;
 
-    public TrainingView(String dateOfTraining, int distanceOfTraining, String  timeOfTraining){
+    public TrainingView(String dateOfTraining, Object distanceOfTraining, String  timeOfTraining){
 
         this.dateOfTraining=dateOfTraining;
         this.distanceOfTraining=distanceOfTraining;
@@ -20,11 +20,11 @@ public class TrainingView {
         this.dateOfTraining = dateOfTraining;
     }
 
-    public int getDistanceOfTraining() {
+    public Object getDistanceOfTraining() {
         return this.distanceOfTraining;
     }
 
-    public void setDistanceOfTraining(int distanceOfTraining) {
+    public void setDistanceOfTraining(Object distanceOfTraining) {
         this.distanceOfTraining = distanceOfTraining;
     }
 

@@ -76,7 +76,6 @@ public class TrainingActivity extends AppCompatActivity implements LocListenerIn
 
     private MapView mapView;
     private MapObjectCollection mapObjects;
-    private Map map;
     @NonNull private PlacemarkMapObject Now_Geoposition;
     @NonNull double shirota;
     @NonNull double longg;
@@ -88,8 +87,8 @@ public class TrainingActivity extends AppCompatActivity implements LocListenerIn
     private DatabaseReference mDatabase;
     public java.util.Map<String, Boolean> stars = new HashMap<>();
 
-    int countOfTraining = 1;
-    public String nameOfTraining = "";
+    public static int countOfTraining = 1;
+    public static String nameOfTraining = "";
 
 
     @SuppressLint("MissingPermission")

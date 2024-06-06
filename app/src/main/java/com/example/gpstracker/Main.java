@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.MenuItem;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -29,9 +30,12 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
+import java.util.Map;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Objects;
 
 public class Main extends AppCompatActivity implements LocListenerInterface{
@@ -41,9 +45,10 @@ public class Main extends AppCompatActivity implements LocListenerInterface{
     private MyLocListener myLocListener;
     ArrayList<TrainingView> trainingViewArrayList = new ArrayList<TrainingView>();
     private DatabaseReference mDatabase;
-    FirebaseAuth mAuth;
+    private FirebaseDatabase database;
     TrainingViewAdapter adapter;
-
+    TextView text;
+    boolean firstExist = true;
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,24 +75,72 @@ public class Main extends AppCompatActivity implements LocListenerInterface{
         bottomNavigationView.getMenu().getItem(1).setChecked(true);///устанавливаем выбранной кнопку home///
 
         setInitialData();
+        text=findViewById(R.id.textViewEx);
         RecyclerView recyclerView = findViewById(R.id.list);
         // создаем адаптер
         adapter = new TrainingViewAdapter(this, trainingViewArrayList);
         // устанавливаем для списка адаптер
         recyclerView.setAdapter(adapter);
 
+        //database = FirebaseDatabase.getInstance();
         mDatabase = FirebaseDatabase.getInstance().getReference();
-        FirebaseUser user = mAuth.getCurrentUser();
+        if(!firstExist)readDataFromDb();
+        firstExist = false;
 
-        mDatabase.child(user.getUid()).addValueEventListener(new ValueEventListener() {
+    }
+    public void onResume(){
+        readDataFromDb();
+        super.onResume();
+        mDatabase.child("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child(TrainingActivity.nameOfTraining).get().
+                addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DataSnapshot> task) {
+                        if (!task.isSuccessful()) {
+                            Log.e("myfirebase", "Error getting data", task.getException());
+                        }
+                        else {
+                            GenericTypeIndicator<Map<String, Object>> genericTypeIndicator = new GenericTypeIndicator<Map<String, Object>>() {};
+                            Map<String, Object> value = task.getResult().getValue(genericTypeIndicator);
+
+                            TrainingView trainingView = new TrainingView("jnjknkj", value.get("steps"), "kjh");
+                            trainingViewArrayList.add(trainingView);
+                            Log.v("firebase", "V " + value.get("steps"));
+                        }
+                    }
+                });
+    }
+
+
+    public void readDataFromDb(){
+        mDatabase.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                trainingViewArrayList = snapshot.child(user.getUid()).getValue();
-            }
+                    //GenericTypeIndicator<Map<String, Object>> genericTypeIndicator = new GenericTypeIndicator<Map<String, Object>>() {};
+                    //Map<String, Object> value = snapshot.child("users")
+                    //        .child(FirebaseAuth.getInstance().getCurrentUser().getUid()).getValue(genericTypeIndicator);
+                    ////Log.v("mytext", "Value " + value);
+                mDatabase.child("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child(TrainingActivity.nameOfTraining).get().
+                        addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DataSnapshot> task) {
+                        if (!task.isSuccessful()) {
+                            Log.e("myfirebase", "Error getting data", task.getException());
+                        }
+                        else {
+                            GenericTypeIndicator<Map<String, Object>> genericTypeIndicator = new GenericTypeIndicator<Map<String, Object>>() {};
+                            Map<String, Object> value = task.getResult().getValue(genericTypeIndicator);
+                            TrainingView trainingView = new TrainingView("jnjknkj", value.get("steps"), "kjh");
+                            trainingViewArrayList.add(trainingView);
+
+                            Log.v("firebase", "V " + value.get("steps"));
+                        }
+                    }
+                });
+                }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-
+                Log.v("mytext", "No Complite", error.toException());
             }
         });
     }
