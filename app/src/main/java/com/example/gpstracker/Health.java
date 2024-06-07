@@ -10,6 +10,7 @@ import android.graphics.ColorFilter;
 import android.graphics.drawable.AdaptiveIconDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -29,6 +30,8 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+
 public class Health extends AppCompatActivity {
     private TextView resul_imt;
     private TextView resul_prop;
@@ -43,6 +46,7 @@ public class Health extends AppCompatActivity {
     private Button btnResult;
     private Spinner spinner;
     private  String[] genders = { "М", "Ж"};
+    BottomNavigationView bottomNavigationView;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -56,6 +60,15 @@ public class Health extends AppCompatActivity {
             return insets;
 
         });
+        bottomNavigationView = findViewById(R.id.bottomNavigationView_health);
+
+        bottomNavigationView.setSelectedItemId(R.id.person);
+        bottomNavigationView.setSelectedItemId(R.id.home);
+        bottomNavigationView.setSelectedItemId(R.id.training);
+
+        setAct();
+        bottomNavigationView.getMenu().getItem(0).setChecked(true);
+        bottomNavigationView.getMenu().getItem(1).setChecked(false);
 
         btnResult = findViewById(R.id.btn_result);
         rost = findViewById(R.id.your_height);
@@ -205,6 +218,20 @@ public class Health extends AppCompatActivity {
              resul_strenght.setText("Ваш результат:" + " " + res3);
          }
    }
+    public void setAct() {
+        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+                if (menuItem.getItemId() == R.id.training)
+                    startActivity(new Intent(Health.this, TrainingActivity.class));
+                else if (menuItem.getItemId() == R.id.home) {
+                    startActivity(new Intent(Health.this, Main.class));
+                }
+
+                return false;
+            }
+        });
+    }
     /** ДИОЛОГ С РОСТОМ */
         public void showDialogRost() {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);

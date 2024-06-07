@@ -41,7 +41,6 @@ import com.yandex.mapkit.geometry.Point;
 import com.yandex.mapkit.geometry.Polyline;
 import com.yandex.mapkit.internal.MapKitBinding;
 import com.yandex.mapkit.map.CameraPosition;
-import com.yandex.mapkit.map.Map;
 import com.yandex.mapkit.map.MapObjectCollection;
 import com.yandex.mapkit.map.PlacemarkMapObject;
 import com.yandex.mapkit.mapview.MapView;
@@ -52,6 +51,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 public class TrainingActivity extends AppCompatActivity implements LocListenerInterface, SensorEventListener {
     private TextView tvResDistance, tvTotal, tvVelocity;
@@ -89,14 +89,17 @@ public class TrainingActivity extends AppCompatActivity implements LocListenerIn
 
     public static int countOfTraining = 1;
     public static String nameOfTraining = "";
+    public static int init=1;
 
 
     @SuppressLint("MissingPermission")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        if(init==1){
         MapKitFactory.setApiKey("e3460f52-0812-45df-8e03-9b6b2b641b5c");
+        init=0;
+        }
         setContentView(R.layout.activity_training);
 
         init();
@@ -199,10 +202,13 @@ public class TrainingActivity extends AppCompatActivity implements LocListenerIn
         } else {
             mSensorManager.registerListener(this, stepSensor, SensorManager.SENSOR_DELAY_NORMAL);
         }
+        MapKitFactory.getInstance().onStart();
     }
 
     protected void onPause(){
         super.onPause();
+        MapKitFactory.getInstance().onStop();
+        mapView.onStop();
         mSensorManager.unregisterListener(this);
         locationManager.removeUpdates(locationListener);
 

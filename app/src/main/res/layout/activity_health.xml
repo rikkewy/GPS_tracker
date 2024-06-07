@@ -9,6 +9,7 @@
     tools:context=".Health">
 
     <ScrollView
+        android:id="@+id/scrollView"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -351,6 +352,18 @@
                     android:layout_gravity="center"/>
             </LinearLayout>
 
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="100dp"/>
         </LinearLayout>
+
     </ScrollView>
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+    android:id="@+id/bottomNavigationView_health"
+    android:layout_width="match_parent"
+    android:layout_height="75dp"
+    android:layout_alignParentBottom="true"
+    app:itemIconTint="@color/black"
+    app:itemTextColor="@color/black"
+    app:menu="@menu/bottom_nav_menu"/>
 </RelativeLayout>
