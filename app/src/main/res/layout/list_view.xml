@@ -6,19 +6,56 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="vertical"
+        android:background="@drawable/bg_border_training"
+        android:layout_marginBottom="20dp"
+        android:layout_marginTop="13dp">
+
+        <TextView
+            android:id="@+id/date_of_training"
+            android:layout_width="200dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="30dp"
+            android:text="Date Of Training"
+            android:gravity="center"
+            android:textStyle="bold"/>
+        <TextView
+            android:id="@+id/best_speed"
+            android:layout_width="200dp"
+            android:layout_height="40dp"
+            android:text="Best Speed"
+            android:layout_gravity="center"
+            android:gravity="center"/>
+        <TextView
+            android:id="@+id/time_of_training"
+            android:layout_width="200dp"
+            android:layout_height="40dp"
+            android:text="Time Of Training"
+            android:layout_gravity="center"
+            android:gravity="center"/>
 
         <TextView
             android:id="@+id/distance"
             android:layout_width="150dp"
             android:layout_height="40dp"
-            android:text="дистанция" />
+            android:text="Distance"
+            android:layout_gravity="center"
+            android:gravity="center"/>
 
         <TextView
             android:id="@+id/steps"
             android:layout_width="150dp"
             android:layout_height="40dp"
-            android:text="шаги" />
+            android:text="Steps"
+            android:layout_gravity="center"
+            android:gravity="center"/>
+        <TextView
+            android:id="@+id/temp_of_training"
+            android:layout_width="200dp"
+            android:layout_height="40dp"
+            android:text="Temp Of Training"
+            android:layout_gravity="center"
+            android:gravity="center"/>
 
     </LinearLayout>
 

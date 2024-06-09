@@ -17,20 +17,31 @@ import android.location.LocationListener;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.AnimationUtils;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
@@ -47,14 +58,17 @@ import com.yandex.mapkit.mapview.MapView;
 import com.yandex.runtime.image.ImageProvider;
 
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
 public class TrainingActivity extends AppCompatActivity implements LocListenerInterface, SensorEventListener {
-    private TextView tvResDistance, tvTotal, tvVelocity;
+    private TextView tvResDistance, tvTotal, tvVelocity, txtGoal;
     private Location lastLocation;
     private int distance;
     private int total_distance = 0;
@@ -64,7 +78,6 @@ public class TrainingActivity extends AppCompatActivity implements LocListenerIn
     private boolean running;
     TextView stopwatch;
     TextView tempos;
-    DBHelperTraining dbHelperTraining;
     private LocationManager locationManager;
     private MyLocListener myLocListener;
 
@@ -91,16 +104,29 @@ public class TrainingActivity extends AppCompatActivity implements LocListenerIn
     public static String nameOfTraining = "";
     public static int init=1;
 
+    protected float bestSpeed = 0f;
+    String finalTemp;
+    BottomNavigationView bottomNavigationView;
+    Button btn_start;
 
+    ScrollView mainScrollView;
+    ImageView transparentImageView, person, home, training;
     @SuppressLint("MissingPermission")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if(init==1){
-        MapKitFactory.setApiKey("e3460f52-0812-45df-8e03-9b6b2b641b5c");
-        init=0;
+        if (init == 1) {
+            MapKitFactory.setApiKey("e3460f52-0812-45df-8e03-9b6b2b641b5c");
+            init = 0;
         }
+        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_training);
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.Constrain), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+
+        });
 
         init();
 
@@ -116,9 +142,8 @@ public class TrainingActivity extends AppCompatActivity implements LocListenerIn
         mapView.getMap().move(
                 new CameraPosition(new Point(shirota, longg), 14.0f, 0.0f, 0.0f));
         Now_Geoposition = mapView.getMap().getMapObjects().addPlacemark(
-             new Point(shirota, longg));
+                new Point(shirota, longg));
         stopwatch = findViewById(R.id.chron);
-        tempos = findViewById(R.id.tempo);
 
         steps = findViewById(R.id.steps);
         resetSteps();
@@ -132,9 +157,81 @@ public class TrainingActivity extends AppCompatActivity implements LocListenerIn
         mDatabase = FirebaseDatabase.getInstance().getReference();
         SharedPreferences sharedPref = getSharedPreferences("train", Context.MODE_PRIVATE);
         countOfTraining = Integer.valueOf(sharedPref.getString("count_train", String.valueOf(1)));
+
+        //bottomNavigationView = findViewById(R.id.bottomNavigationView_train);
+//
+        //bottomNavigationView.setSelectedItemId(R.id.person);
+        //bottomNavigationView.setSelectedItemId(R.id.home);
+        //bottomNavigationView.setSelectedItemId(R.id.training);
+//
+        //setAct();
+        //bottomNavigationView.getMenu().getItem(2).setChecked(true);
+        //bottomNavigationView.getMenu().getItem(0).setChecked(false);
+        //bottomNavigationView.getMenu().getItem(1).setChecked(false);
+
+        mainScrollView = (ScrollView) findViewById(R.id.scrollView);
+        transparentImageView = (ImageView) findViewById(R.id.transparent_image);
+        transparentImageView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                int action = event.getAction();
+                switch (action) {
+                    case MotionEvent.ACTION_DOWN:
+                        // Disallow ScrollView to intercept touch events.
+                        mainScrollView.requestDisallowInterceptTouchEvent(true);
+                        // Disable touch on transparent view
+                        return false;
+
+                    case MotionEvent.ACTION_UP:
+                        // Allow ScrollView to intercept touch events.
+                        mainScrollView.requestDisallowInterceptTouchEvent(false);
+                        return true;
+
+                    case MotionEvent.ACTION_MOVE:
+                        mainScrollView.requestDisallowInterceptTouchEvent(true);
+                        return false;
+
+                    default:
+                        return true;
+                }
+            }
+        });
+        person = findViewById(R.id.image_person);
+        home = findViewById(R.id.image_home);
+        training = findViewById(R.id.image_training);
+
+        person.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                v.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.animation_image));
+                startActivity(new Intent(TrainingActivity.this, Health.class));
+            }
+        });
+        home.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                v.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.animation_image));
+                startActivity(new Intent(TrainingActivity.this, Main.class));
+            }
+        });
+
+        txtGoal = findViewById(R.id.txt_goal);
     }
 
+    public void setAct() {
+        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+                if (menuItem.getItemId() == R.id.home)
+                    startActivity(new Intent(TrainingActivity.this, Main.class));
+                else if (menuItem.getItemId() == R.id.person) {
+                    startActivity(new Intent(TrainingActivity.this, Health.class));
+                }
 
+                return false;
+            }
+        });
+    }
 
     public void onStart() {
         super.onStart();
@@ -159,15 +256,19 @@ public class TrainingActivity extends AppCompatActivity implements LocListenerIn
         public void onLocationChanged(@NonNull Location location) {
             lastLatitude = lastKnowLoc.getLatitude();
             lastLongitude = lastKnowLoc.getLongitude();
-            if(!firstTimeChangeLoc)drawLine(lastLatitude, lastLongitude, location);
+            if (running) {
+                if (!firstTimeChangeLoc) drawLine(lastLatitude, lastLongitude, location);
 
-            float d_distance = lastKnowLoc.distanceTo(location);
-            if (distance > total_distance) total_distance += (int) d_distance;
-            pb.setProgress(total_distance);
-            tvTotal.setText(String.valueOf(total_distance));
+                float d_distance = lastKnowLoc.distanceTo(location);
+                if (distance > total_distance) total_distance += (int) d_distance;
+                pb.setProgress(total_distance);
+                tvTotal.setText(String.valueOf(total_distance));
 
-            String formattedSpeed = "" + Math.round(location.getSpeed() * 3600 / 1000 * 10.0) / 10.0;
-            tvVelocity.setText(formattedSpeed);
+                String formattedSpeed = "" + Math.round(location.getSpeed() * 3600 / 1000 * 10.0) / 10.0;
+                float speed = location.getSpeed();
+                if (speed > bestSpeed) bestSpeed = speed;
+                tvVelocity.setText(formattedSpeed);
+            }
 
             lastKnowLoc = location;
             showLocation(location);
@@ -243,6 +344,7 @@ public class TrainingActivity extends AppCompatActivity implements LocListenerIn
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         myLocListener = new MyLocListener();
         myLocListener.setLocListenerInterface(this);
+        btn_start = findViewById(R.id.start_time);
     }
 
     private void setDistance(String dis) {
@@ -266,6 +368,7 @@ public class TrainingActivity extends AppCompatActivity implements LocListenerIn
         builder.setPositiveButton(R.string.dialog_button, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                txtGoal.setText("");
                 AlertDialog ad = (AlertDialog) dialog;
                 EditText ed = ad.findViewById(R.id.edText);
                 if (ed != null) {
@@ -293,10 +396,50 @@ public class TrainingActivity extends AppCompatActivity implements LocListenerIn
         //tvVelocity.setText(formattedSpeed);
     }
 
-    public void onClickStart(View view) {running = true;}
+
+    public void onClickStart(View view) {
+
+        if(btn_start.getText().toString().equals("Stop")){
+            float minits = (float)seconds/60;
+            float rast = (float)total_distance/1000;
+            finalTemp = (rast!=0)? (int)(minits/rast) + ":1" : "0:00";
+            comp();
+            running = false;
+            //String str =
+            //        "Дистанция: " + String.valueOf(total_distance) + "\n" +
+            //                "Время: " + stopwatch.getText().toString();
+            //DialogAftTraining dialog1 = new DialogAftTraining();
+            //Bundle args = new Bundle();
+            //args.putString("key", str);
+            //dialog1.setArguments(args);
+            //dialog1.show(getSupportFragmentManager(), "custom");
+            Toast.makeText(this, "Тренировка записана", Toast.LENGTH_LONG).show();
+
+            previewsTotalSteps = totalSteps;
+            steps.setText("0");
+            savedData();
+
+            stopwatch.setText(R.string.zero_stopwatch);
+            tvTotal.setText("0");
+            total_distance = 0;
+            seconds = 0;
+
+            btn_start.setText("Start");
+            txtGoal.setText("Нажмите, чтобы задать цель");
+            tvResDistance.setText("Goal");
+        }
+        else{
+            if(txtGoal.getText().toString().equals("Нажмите, чтобы задать цель")) Toast.makeText(this, "Сначала задайте цель!", Toast.LENGTH_LONG).show();
+            else{running = true;
+            btn_start.setText("Stop");}
+        }
+    }
 
     ///////// ОСТАНАВЛИВАЕТ ТРЕНИРОВКУ И ПОКАЗЫВАЕТ ДИАЛОГОВОЕ ОКНО //////////
     public void onClickStop(View view) {
+        float minits = (float)seconds/60;
+        float rast = (float)total_distance/1000;
+        finalTemp = (rast!=0)? (minits/rast) + ":1" : "0:00";
         comp();
         running = false;
         String str =
@@ -322,8 +465,15 @@ public class TrainingActivity extends AppCompatActivity implements LocListenerIn
 
     public void comp() {
         HashMap<String, Object> userInfo = new HashMap<>();
-        userInfo.put("steps", totalSteps);
-        userInfo.put("dis", total_distance);
+        userInfo.put("best_speed", bestSpeed);
+        userInfo.put("time", stopwatch.getText().toString());
+        userInfo.put("steps", steps.getText().toString());
+        userInfo.put("dis", tvTotal.getText().toString());
+
+        DateFormat df = new SimpleDateFormat("dd MM yyyy HH:mm");
+        String date = df.format(Calendar.getInstance().getTime());
+        userInfo.put("date", date);
+        userInfo.put("temp", finalTemp);
         SharedPreferences sharedPref = getSharedPreferences("train", Context.MODE_PRIVATE);
         countOfTraining = Integer.valueOf(sharedPref.getString("count_train", String.valueOf(1)));
         nameOfTraining = "Training" + String.valueOf(countOfTraining);

@@ -12,10 +12,12 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -47,6 +49,7 @@ public class Health extends AppCompatActivity {
     private Spinner spinner;
     private  String[] genders = { "М", "Ж"};
     BottomNavigationView bottomNavigationView;
+    ImageView person, home, training;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -60,15 +63,15 @@ public class Health extends AppCompatActivity {
             return insets;
 
         });
-        bottomNavigationView = findViewById(R.id.bottomNavigationView_health);
-
-        bottomNavigationView.setSelectedItemId(R.id.person);
-        bottomNavigationView.setSelectedItemId(R.id.home);
-        bottomNavigationView.setSelectedItemId(R.id.training);
-
-        setAct();
-        bottomNavigationView.getMenu().getItem(0).setChecked(true);
-        bottomNavigationView.getMenu().getItem(1).setChecked(false);
+        //bottomNavigationView = findViewById(R.id.bottomNavigationView_health);
+//
+        //bottomNavigationView.setSelectedItemId(R.id.person);
+        //bottomNavigationView.setSelectedItemId(R.id.home);
+        //bottomNavigationView.setSelectedItemId(R.id.training);
+//
+        //setAct();
+        //bottomNavigationView.getMenu().getItem(0).setChecked(true);
+        //bottomNavigationView.getMenu().getItem(1).setChecked(false);
 
         btnResult = findViewById(R.id.btn_result);
         rost = findViewById(R.id.your_height);
@@ -139,6 +142,25 @@ public class Health extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 showDialogCirc();
+            }
+        });
+
+        person = findViewById(R.id.image_person);
+        home = findViewById(R.id.image_home);
+        training = findViewById(R.id.image_training);
+
+        training.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                v.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.animation_image));
+                startActivity(new Intent(Health.this, TrainingActivity.class));
+            }
+        });
+        home.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                v.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.animation_image));
+                startActivity(new Intent(Health.this, Main.class));
             }
         });
     }

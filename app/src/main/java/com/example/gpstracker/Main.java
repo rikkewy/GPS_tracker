@@ -13,7 +13,11 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -36,6 +40,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 
@@ -52,187 +59,143 @@ public class Main extends AppCompatActivity implements LocListenerInterface{
     List<ResultTraining> resultTrainings;
     RecyclerView recyclerView;
     boolean firstExist = true;
-    String dis_str;
-    String steps_str;
+    String date_str, time_str, bestSpeed_str, temp_str, dis_str, steps_str;
     MyAdapter adapter;
+    ImageView person, home, training;
 
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+        if (FirebaseAuth.getInstance().getCurrentUser() == null) {
+            startActivity(new Intent(Main.this, LoginActivity.class));
+        }
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         myLocListener = new MyLocListener();
         myLocListener.setLocListenerInterface(this);
         checkPermissions();
 
-        //// ПРОВЕРКА НА НАЛИЧИЕ В БАЗЕ ДАННЫХ ПОЛЬЗОВАТЕЛЯ //////
-        if (FirebaseAuth.getInstance().getCurrentUser() == null) {
-            startActivity(new Intent(Main.this, LoginActivity.class));
-            //// ЕСЛИ ПОЛЬЗОВАТЕЛЬ НЕ ЗАРЕГИСТРИРОВАН ТО ПЕРЕХОД НА ОКНО АВТОРИЗАЦИИ ////
-        }
 
-        bottomNavigationView = findViewById(R.id.bottomNavigationView);
+        //bottomNavigationView = findViewById(R.id.bottomNavigationView);
+        //bottomNavigationView.setSelectedItemId(R.id.person);
+        //bottomNavigationView.setSelectedItemId(R.id.home);
+        //bottomNavigationView.setSelectedItemId(R.id.training);
+        //setAct();
+        //bottomNavigationView.getMenu().getItem(1).setChecked(true);
 
-        bottomNavigationView.setSelectedItemId(R.id.person);
-        bottomNavigationView.setSelectedItemId(R.id.home);
-        bottomNavigationView.setSelectedItemId(R.id.training);
-
-        setAct();
-        bottomNavigationView.getMenu().getItem(1).setChecked(true);
-
-        ///устанавливаем выбранной кнопку home///
-
-        resultTrainings = new ArrayList<ResultTraining>();
-       // resultTrainings.add(new ResultTraining( "hugyyghbj ", " hghuj"));
+        resultTrainings = new ArrayList<>();
         recyclerView = findViewById(R.id.recycler);
-         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-        mDatabase = FirebaseDatabase.getInstance().getReference();
-        if(!firstExist)readDataFromDb();
-        firstExist = false;
-       /* mDatabase.child("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).get().
-                addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DataSnapshot> task) {
-                        if (!task.isSuccessful()) {
-                            Log.e("myfirebase", "Error getting data", task.getException());
-                        } else {
-                            GenericTypeIndicator<Map<String, Object>> genericTypeIndicator = new GenericTypeIndicator<Map<String, Object>>() {};
-                            Map<String, Object> value = task.getResult().getValue(genericTypeIndicator);
-                            if(value!=null) {
-                                for (int i = 1+77; i < value.size()+77; i++) {
-                                    mDatabase.child("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("Training" + i).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-                                        @Override
-                                        public void onComplete(@NonNull Task<DataSnapshot> task) {
-                                            if (task.isSuccessful()) {
-                                                Map<String, Object> dis = task.getResult().getValue(genericTypeIndicator);
-                                                String s2=task.getResult().getValue().toString();
-                                                String[] s1=s2.split(",");
-                                                int serch=s1[0].lastIndexOf("=");
-                                                s2=s1[0].substring(serch+1, s1[0].length());
-                                                dis_str = s2;
-                                                serch=s1[1].lastIndexOf("=");
-                                                s2=s1[1].substring(serch+1, s1[1].length()-1);
-                                                steps_str =s2;
-                                                if(dis_str!=null||steps_str!=null)
-                                                    resultTrainings.add(new ResultTraining(dis_str, steps_str));
-                                                //Log.v("firebase", "V " + dis.get("dis"));
-                                            } else
-                                                Log.e("myfirebase", "Error getting data", task.getException());
-                                        }
-                                    });
-
-                                    //  if(dis_str!=null||steps_str!=null)
-                                    //  resultTrainings.add(new ResultTraining(dis_str, steps_str));
-
-                                }
-                            }
-                        }
-                    }
-                });*/
-         adapter=new MyAdapter(getApplicationContext(), resultTrainings);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        adapter = new MyAdapter(getApplicationContext(), resultTrainings);
         recyclerView.setAdapter(adapter);
 
-    }
-    public void onResume(){
-        super.onResume();
-      //resultTrainings.clear();
-        mDatabase.child("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).get().
-                addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DataSnapshot> task) {
-                        if (!task.isSuccessful()) {
-                            Log.e("myfirebase", "Error getting data", task.getException());
-                        } else {
-                            GenericTypeIndicator<Map<String, Object>> genericTypeIndicator = new GenericTypeIndicator<Map<String, Object>>() {};
-                            Map<String, Object> value = task.getResult().getValue(genericTypeIndicator);
-                            if(value!=null) {
-                                for (int i = 1+77; i < value.size()+77; i++) {
-                                    mDatabase.child("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("Training" + i).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-                                        @Override
-                                        public void onComplete(@NonNull Task<DataSnapshot> task) {
-                                            if (task.isSuccessful()) {
-                                                Map<String, Object> dis = task.getResult().getValue(genericTypeIndicator);
-                                                String s2=task.getResult().getValue().toString();
-                                                String[] s1=s2.split(",");
-                                                int serch=s1[0].lastIndexOf("=");
-                                                s2=s1[0].substring(serch+1, s1[0].length());
-                                                dis_str = s2;
-                                                serch=s1[1].lastIndexOf("=");
-                                                s2=s1[1].substring(serch+1, s1[1].length()-1);
-                                                steps_str =s2;
-                                                if(dis_str!=null||steps_str!=null)
-                                                    resultTrainings.add(new ResultTraining(dis_str, steps_str));
-                                                //Log.v("firebase", "V " + dis.get("dis"));
-                                            } else
-                                                Log.e("myfirebase", "Error getting data", task.getException());
-                                        }
-                                    });
+        mDatabase = FirebaseDatabase.getInstance().getReference();
 
-                                  //  if(dis_str!=null||steps_str!=null)
-                                  //  resultTrainings.add(new ResultTraining(dis_str, steps_str));
+        if(!firstExist)loadDataFromDb();
+        firstExist= false;
 
-                                }
-                            }
-                        }
-                    }
-                });
-       adapter.notifyDataSetChanged();
+        person = findViewById(R.id.image_person);
+        home = findViewById(R.id.image_home);
+        training = findViewById(R.id.image_training);
 
-    }
-
-
-    public void readDataFromDb(){
-        mDatabase.addValueEventListener(new ValueEventListener() {
+        person.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                mDatabase.child("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).get().
-                        addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DataSnapshot> task) {
-                        if (!task.isSuccessful()) {
-                            Log.e("myfirebase", "Error getting data", task.getException());
-                        }
-                        else {
-                            GenericTypeIndicator<Map<String, Object>> genericTypeIndicator = new GenericTypeIndicator<Map<String, Object>>() {};
-                            Map<String, Object> value = task.getResult().getValue(genericTypeIndicator);
-                            assert value != null;
-
-                            resultTrainings.add(new ResultTraining( String.valueOf((value.get("Training"+1))), String.valueOf(value.get("steps"))));
-                            recyclerView.setAdapter(new MyAdapter(getApplicationContext(), resultTrainings));
-                            Log.v("firebase", "V " + value.get("Training"+1));
-                            }
-                        }
-
-                });
-                }
-
+            public void onClick(View v) {
+                v.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.animation_image));
+                startActivity(new Intent(Main.this, Health.class));
+            }
+        });
+        training.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Log.v("mytext", "No Complite", error.toException());
+            public void onClick(View v) {
+                v.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.animation_image));
+                startActivity(new Intent(Main.this, TrainingActivity.class));
             }
         });
     }
 
-    private void setInitialData(){
-
-        //trainingViewArrayList.add(new TrainingView("jj", 0, ""));
-        //states.add(new State ("Аргентина", "Буэнос-Айрес", R.drawable.argentina));
-        //states.add(new State ("Колумбия", "Богота", R.drawable.columbia));
-        //states.add(new State ("Уругвай", "Монтевидео", R.drawable.uruguai));
-        //states.add(new State ("Чили", "Сантьяго", R.drawable.chile));
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(!firstExist){
+            loadDataFromDb();
+            firstExist=false;
+        }
     }
+
+    private void loadDataFromDb() {
+        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+            mDatabase.child("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).get().
+                    addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DataSnapshot> task) {
+                            if (!task.isSuccessful()) {
+                                Log.e("myfirebase", "Error getting data", task.getException());
+                            } else {
+                                resultTrainings.clear(); // Очистка списка перед добавлением новых данных
+                                GenericTypeIndicator<Map<String, Object>> genericTypeIndicator = new GenericTypeIndicator<Map<String, Object>>() {
+                                };
+                                Map<String, Object> value = task.getResult().getValue(genericTypeIndicator);
+                                if (value != null && !value.isEmpty()) {
+                                    for (int i = value.size(); i > 0; i--) {
+                                        mDatabase.child("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("Training" + i).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<DataSnapshot> task) {
+                                                if (task.isSuccessful() && task.getResult().getValue()!=null) {
+                                                    String s2 = task.getResult().getValue().toString();
+                                                    Log.v("value", "Training: " + s2);
+                                                    String[] s1 = s2.split(",");
+
+                                                    int serch = s1[0].lastIndexOf("=");
+                                                    s2 = s1[0].substring(serch + 1);
+                                                    bestSpeed_str = s2;
+
+                                                    serch = s1[1].lastIndexOf("=");
+                                                    s2 = s1[1].substring(serch + 1, s1[1].length());
+                                                    date_str = s2;
+
+                                                    serch = s1[2].lastIndexOf("=");
+                                                    s2 = s1[2].substring(serch + 1, s1[2].length());
+                                                    temp_str = s2;
+
+                                                    serch = s1[3].lastIndexOf("=");
+                                                    s2 = s1[3].substring(serch + 1, s1[3].length());
+                                                    time_str = s2;
+
+                                                    serch = s1[4].lastIndexOf("=");
+                                                    s2 = s1[4].substring(serch + 1, s1[4].length());
+                                                    steps_str = s2;
+
+                                                    serch = s1[5].lastIndexOf("=");
+                                                    s2 = s1[5].substring(serch + 1, s1[5].length() - 1);
+                                                    dis_str = s2;
+                                                    if (bestSpeed_str != null || time_str != null || dis_str != null || steps_str != null || date_str != null) {
+                                                        resultTrainings.add(new ResultTraining(date_str, time_str, dis_str, bestSpeed_str, temp_str, steps_str));
+                                                    }
+                                                } else {
+                                                    Log.e("myfirebase", "Error getting data", task.getException());
+                                                }
+                                                adapter.notifyDataSetChanged(); // Уведомление адаптера об изменениях в данных
+                                            }
+                                        });
+                                    }
+                                }
+                            }
+                        }
+                    });
+        }
+    }
+
     public void setAct() {
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-                if (menuItem.getItemId() == R.id.training)
+                if (menuItem.getItemId() == R.id.training) {
                     startActivity(new Intent(Main.this, TrainingActivity.class));
-                else if (menuItem.getItemId() == R.id.person) {
+                } else if (menuItem.getItemId() == R.id.person) {
                     startActivity(new Intent(Main.this, Health.class));
                 }
-
                 return false;
             }
         });

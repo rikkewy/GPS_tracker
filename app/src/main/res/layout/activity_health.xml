@@ -358,12 +358,33 @@
         </LinearLayout>
 
     </ScrollView>
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-    android:id="@+id/bottomNavigationView_health"
-    android:layout_width="match_parent"
-    android:layout_height="75dp"
-    android:layout_alignParentBottom="true"
-    app:itemIconTint="@color/black"
-    app:itemTextColor="@color/black"
-    app:menu="@menu/bottom_nav_menu"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="75dp"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal"
+        android:background = "@drawable/bg_menu">
+
+        <ImageView
+            android:id="@+id/image_person"
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:src="@drawable/person_svgrepo_com"
+            android:layout_marginStart="40dp"/>
+        <ImageView
+            android:id="@+id/image_home"
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:src="@drawable/icon_home"
+            android:layout_marginStart="80dp"/>
+        <ImageView
+            android:id="@+id/image_training"
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:src="@drawable/chronometer_svgrepo_com"
+            android:layout_marginStart="78dp"
+            />
+
+
+    </LinearLayout>
 </RelativeLayout>

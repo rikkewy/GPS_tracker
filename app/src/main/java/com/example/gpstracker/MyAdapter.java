@@ -28,8 +28,12 @@ public class MyAdapter extends RecyclerView.Adapter<MyHolderView> {
 
     @Override
     public void onBindViewHolder(@NonNull MyHolderView holder, int position) {
-        holder.distanceTV.setText(resultTrainings.get(position).getDistance());
-        holder.stepsTV.setText(resultTrainings.get(position).getSteps());
+        holder.dateOfTrainingTV.setText("Дата тренировки: " + resultTrainings.get(position).getDateOfTraining());
+        holder.timeOfTrainingTV.setText("Время тренировки: " + resultTrainings.get(position).getTimeOfTraining());
+        holder.distanceTV.setText("Дистанция: " + resultTrainings.get(position).getDistance());
+        holder.bestSpeedTV.setText("Лучшая скорость: " +resultTrainings.get(position).getBestSpeed());
+        holder.tempOfTrainingTV.setText("Темп: " + resultTrainings.get(position).getTempOfTraining());
+        holder.stepsTV.setText("Шаги: " + resultTrainings.get(position).getSteps());
     }
 
     @Override
