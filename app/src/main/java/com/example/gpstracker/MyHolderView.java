@@ -2,11 +2,12 @@ package com.example.gpstracker;
 
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class MyHolderView extends RecyclerView.ViewHolder {
+public class MyHolderView extends RecyclerView.ViewHolder{
 
     TextView dateOfTrainingTV, timeOfTrainingTV, distanceTV, bestSpeedTV, tempOfTrainingTV, stepsTV;
     public MyHolderView(@NonNull View itemView) {
@@ -18,4 +19,5 @@ public class MyHolderView extends RecyclerView.ViewHolder {
         tempOfTrainingTV = itemView.findViewById(R.id.temp_of_training);
         stepsTV = itemView.findViewById(R.id.steps);
     }
+
 }

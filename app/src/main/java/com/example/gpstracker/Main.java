@@ -13,10 +13,13 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -53,6 +56,7 @@ import java.util.Objects;
 public class Main extends AppCompatActivity implements LocListenerInterface{
 
     BottomNavigationView bottomNavigationView;
+
     private LocationManager locationManager;
     private MyLocListener myLocListener;
     private DatabaseReference mDatabase;
@@ -62,6 +66,7 @@ public class Main extends AppCompatActivity implements LocListenerInterface{
     String date_str, time_str, bestSpeed_str, temp_str, dis_str, steps_str;
     MyAdapter adapter;
     ImageView person, home, training;
+    ImageButton goChat;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -76,6 +81,13 @@ public class Main extends AppCompatActivity implements LocListenerInterface{
         myLocListener.setLocListenerInterface(this);
         checkPermissions();
 
+        goChat = findViewById(R.id.imageButton);
+        goChat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(Main.this, GPTChat.class));
+            }
+        });
 
         //bottomNavigationView = findViewById(R.id.bottomNavigationView);
         //bottomNavigationView.setSelectedItemId(R.id.person);
@@ -113,6 +125,11 @@ public class Main extends AppCompatActivity implements LocListenerInterface{
                 startActivity(new Intent(Main.this, TrainingActivity.class));
             }
         });
+
+
+    }
+    public void showToast(){
+        Toast.makeText(Main.this, "HHHHHHHHHHHHHHHHHHHHHHHHHHH", Toast.LENGTH_LONG).show();
     }
 
     @Override
@@ -120,8 +137,8 @@ public class Main extends AppCompatActivity implements LocListenerInterface{
         super.onResume();
         if(!firstExist){
             loadDataFromDb();
-            firstExist=false;
         }
+        firstExist=false;
     }
 
     private void loadDataFromDb() {
